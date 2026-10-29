@@ -1,6 +1,7 @@
 import { useLocale, useTranslations } from "next-intl";
 
 import { Link } from "@/i18n/navigation";
+import { cityLabel } from "@/lib/cities";
 import { formatEgp, formatPlain } from "@/lib/datetime";
 import type { DoctorSummary } from "@/lib/api/types";
 
@@ -65,7 +66,7 @@ export function DoctorCard({ doctor }: { doctor: DoctorSummary }) {
         </h3>
         <p className="text-sm font-medium text-accent">{doctor.specialty.name}</p>
         <p className="text-sm text-muted">
-          {doctor.clinic.name} · {doctor.clinic.city}
+          {doctor.clinic.name} — {cityLabel(doctor.clinic.city, locale)}
         </p>
         <p className="flex flex-wrap gap-x-4 text-sm text-muted">
           {doctor.yearsExperience ? (

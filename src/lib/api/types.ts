@@ -77,7 +77,7 @@ export type Appointment = {
   slotId: string;
   startsAt: string;
   endsAt: string;
-  /** Clinic wall-clock start, ISO local date-time (`2026-11-02T09:00:00`). */
+  /** Clinic wall-clock start with offset (`2026-11-02T09:00:00+02:00`). */
   startsAtLocal: string;
   timezone: string;
   doctor: { id: string; slug: string; name: string; photoUrl?: string | null };

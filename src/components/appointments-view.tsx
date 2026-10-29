@@ -244,6 +244,10 @@ function AppointmentCard({
     setError(null);
     try {
       await action();
+      setMode("idle");
+      setPicked(null);
+      setReason("");
+      setBusy(false);
       onChanged(success);
     } catch (err) {
       setError(errorMessage(err));
@@ -279,7 +283,7 @@ function AppointmentCard({
             </Link>
           </h3>
           <p className="text-sm text-muted">
-            {appointment.clinic.name} · {appointment.clinic.address}
+            {appointment.clinic.name} — {appointment.clinic.address}
           </p>
         </div>
         <span
@@ -290,7 +294,7 @@ function AppointmentCard({
       </div>
 
       <p className="text-xl font-bold">
-        {formatAppointmentDate(appointment, locale)} · {formatAppointmentTime(appointment, locale)}
+        {formatAppointmentDate(appointment, locale)} — {formatAppointmentTime(appointment, locale)}
       </p>
 
       <dl className="grid gap-2 text-sm sm:grid-cols-2">
@@ -420,7 +424,7 @@ function AppointmentCard({
               }
             >
               {t("rescheduleConfirm")}
-              {picked ? ` · ${formatDateKey(picked.date, locale, "short")} ${formatHHmm(picked.slot.local, locale)}` : ""}
+              {picked ? ` — ${formatDateKey(picked.date, locale, "short")} ${formatHHmm(picked.slot.local, locale)}` : ""}
             </button>
             <button
               type="button"

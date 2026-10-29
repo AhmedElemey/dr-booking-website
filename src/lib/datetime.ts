@@ -180,6 +180,18 @@ export function zonedTimeToUtc(
   return new Date(guess);
 }
 
+/** Local ISO date-time with UTC offset (`2026-10-31T10:00:00+02:00`), as the real API returns. */
+export function toLocalIsoWithOffset(instant: Date, timeZone: string): string {
+  const local = toLocalIso(instant, timeZone);
+  const p = parseLocal(local)!;
+  const asUtc = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute);
+  const offsetMin = Math.round((asUtc - Math.floor(instant.getTime() / 60000) * 60000) / 60000);
+  const sign = offsetMin < 0 ? "-" : "+";
+  const abs = Math.abs(offsetMin);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${local}${sign}${pad(Math.floor(abs / 60))}:${pad(abs % 60)}`;
+}
+
 /** Local ISO date-time (no offset) of an instant in a zone. */
 export function toLocalIso(instant: Date, timeZone: string): string {
   const p = zonedParts(instant, timeZone);

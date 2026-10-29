@@ -189,7 +189,7 @@ export function BookingFlow({ doctor }: { doctor: DoctorProfile }) {
               <div>
                 <p className="text-sm text-muted">{t("selected")}</p>
                 <p className="font-bold">
-                  {formatDateKey(picked.date, locale)} · {formatHHmm(picked.slot.local, locale)}
+                  {formatDateKey(picked.date, locale)} — {formatHHmm(picked.slot.local, locale)}
                 </p>
               </div>
               <button
@@ -296,7 +296,7 @@ export function BookingFlow({ doctor }: { doctor: DoctorProfile }) {
               <div>
                 <dt className="text-muted">{t("dateTime")}</dt>
                 <dd className="font-semibold">
-                  {formatDateKey(picked.date, locale)} · {formatHHmm(picked.slot.local, locale)}
+                  {formatDateKey(picked.date, locale)} — {formatHHmm(picked.slot.local, locale)}
                 </dd>
               </div>
               {service?.priceEgp != null ? (
@@ -346,7 +346,7 @@ export function BookingFlow({ doctor }: { doctor: DoctorProfile }) {
             <div>
               <dt className="text-muted">{t("dateTime")}</dt>
               <dd className="font-semibold">
-                {formatAppointmentDate(appointment, locale)} ·{" "}
+                {formatAppointmentDate(appointment, locale)} —{" "}
                 {formatAppointmentTime(appointment, locale)}
               </dd>
             </div>

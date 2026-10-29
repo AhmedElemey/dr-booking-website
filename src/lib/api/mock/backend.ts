@@ -1,6 +1,7 @@
 import {
   addDays,
   toLocalIso,
+  toLocalIsoWithOffset,
   todayInZone,
   zonedTimeToUtc,
 } from "../../datetime";
@@ -249,7 +250,7 @@ function appointmentDto(a: MockAppointment, lang: Lang) {
     slotId: slot.id,
     startsAt: slot.startsAt.toISOString(),
     endsAt: slot.endsAt.toISOString(),
-    startsAtLocal: toLocalIso(slot.startsAt, MOCK_TIMEZONE),
+    startsAtLocal: toLocalIsoWithOffset(slot.startsAt, MOCK_TIMEZONE),
     timezone: MOCK_TIMEZONE,
     doctor: { id: doctor.id, slug: doctor.slug, name: localized(doctor.name, lang), photoUrl: null },
     clinic: {

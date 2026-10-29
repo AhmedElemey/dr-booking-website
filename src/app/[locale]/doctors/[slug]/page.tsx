@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { DoctorAvatar } from "@/components/doctor-card";
 import { btnPrimary, card, container } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
+import { cityLabel } from "@/lib/cities";
 import { ApiError } from "@/lib/api/errors";
 import { getDoctor, getDoctorSlots } from "@/lib/api/server";
 import {
@@ -39,13 +40,13 @@ export async function generateMetadata({
     title: t("metaTitle", {
       name: doctor.name,
       specialty: doctor.specialty.name,
-      city: doctor.clinic.city,
+      city: cityLabel(doctor.clinic.city, locale),
     }),
     description: t("metaDescription", {
       name: doctor.name,
       specialty: doctor.specialty.name,
       clinic: doctor.clinic.name,
-      city: doctor.clinic.city,
+      city: cityLabel(doctor.clinic.city, locale),
     }),
     image: doctor.photoUrl,
   });
@@ -106,7 +107,7 @@ export default async function DoctorProfilePage({
               <h1 className="text-3xl font-extrabold">{doctor.name}</h1>
               <p className="text-lg font-medium text-accent">{doctor.specialty.name}</p>
               <p className="text-muted">
-                {clinic.name} · {clinic.city}
+                {clinic.name} — {cityLabel(clinic.city, locale)}
               </p>
             </div>
           </header>
@@ -133,7 +134,7 @@ export default async function DoctorProfilePage({
                     <span className="text-sm text-muted">
                       {common("minutes", { count: formatPlain(service.durationMinutes, locale) })}
                       {service.priceEgp != null
-                        ? ` · ${formatEgp(service.priceEgp, locale)}`
+                        ? ` — ${formatEgp(service.priceEgp, locale)}`
                         : ""}
                     </span>
                   </li>

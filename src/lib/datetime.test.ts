@@ -10,6 +10,7 @@ import {
   parseLocal,
   todayInZone,
   toLocalIso,
+  toLocalIsoWithOffset,
   zonedTimeToUtc,
 } from "./datetime";
 
@@ -77,6 +78,13 @@ describe("zones and date keys", () => {
   it("adds days across month ends", () => {
     expect(addDays("2026-11-30", 1)).toBe("2026-12-01");
     expect(addDays("2026-03-01", -1)).toBe("2026-02-28");
+  });
+});
+
+describe("toLocalIsoWithOffset", () => {
+  it("matches the API format with Cairo's winter and summer offsets", () => {
+    expect(toLocalIsoWithOffset(new Date("2026-10-31T08:00:00Z"), "Africa/Cairo")).toBe("2026-10-31T10:00:00+02:00");
+    expect(toLocalIsoWithOffset(new Date("2026-07-01T06:00:00Z"), "Africa/Cairo")).toBe("2026-07-01T09:00:00+03:00");
   });
 });
 

@@ -83,16 +83,19 @@ export async function proxyAuth(req: AuthRequest): Promise<ProxyResult> {
     }
 
     case "logout": {
-      let accessToken = req.tokens.accessToken;
-      if (!accessToken && req.tokens.refreshToken) {
-        accessToken = (await refreshTokens(req.tokens.refreshToken, req.backend))
-          ?.accessToken;
+      let { accessToken, refreshToken } = req.tokens;
+      if (!accessToken && refreshToken) {
+        const fresh = await refreshTokens(refreshToken, req.backend);
+        accessToken = fresh?.accessToken;
+        refreshToken = fresh?.refreshToken ?? refreshToken;
       }
       if (accessToken) {
         try {
+          // The API revokes the refresh-token family named in the body.
           await req.backend("/auth/logout", {
             method: "POST",
             headers: forwardHeaders(req.headers, accessToken),
+            body: JSON.stringify({ refreshToken }),
             cache: "no-store",
           });
         } catch {

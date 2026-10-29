@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { DoctorCard } from "@/components/doctor-card";
 import { btnPrimary, btnSecondary, card, container, inputClass, labelClass } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
+import { cityLabel } from "@/lib/cities";
 import { getCities, getSpecialties, searchDoctors } from "@/lib/api/server";
 import { formatNumber } from "@/lib/datetime";
 import { orFallback } from "@/lib/safe";
@@ -138,7 +139,7 @@ export default async function DoctorsPage({
                 <option value="">{t("allCities")}</option>
                 {cities.map((city) => (
                   <option key={city} value={city}>
-                    {city}
+                    {cityLabel(city, locale)}
                   </option>
                 ))}
               </select>

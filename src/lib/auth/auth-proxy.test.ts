@@ -97,6 +97,12 @@ describe("proxyAuth", () => {
     expect((backend.mock.calls[0][1].headers as Headers).get("authorization")).toBe("Bearer a");
   });
 
+  it("sends the refresh token in the logout body so the API revokes the family", async () => {
+    const backend = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
+    await run("logout", backend, { accessToken: "a", refreshToken: "r" });
+    expect(JSON.parse(backend.mock.calls[0][1].body as string)).toEqual({ refreshToken: "r" });
+  });
+
   it("clears the cookies even when the API is unreachable", async () => {
     const backend = vi.fn().mockRejectedValue(new TypeError("fetch failed"));
     const { tokenUpdate } = await run("logout", backend, { accessToken: "a" });

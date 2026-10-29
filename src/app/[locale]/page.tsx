@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { MoonMark } from "@/components/logo";
 import { btnPrimary, btnSecondary, card, container, inputClass, labelClass } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
+import { cityLabel } from "@/lib/cities";
 import { getCities, getSpecialties } from "@/lib/api/server";
 import { formatPlain } from "@/lib/datetime";
 import { orFallback } from "@/lib/safe";
@@ -86,7 +87,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                   <option value="">{t("allCities")}</option>
                   {cities.map((city) => (
                     <option key={city} value={city}>
-                      {city}
+                      {cityLabel(city, locale)}
                     </option>
                   ))}
                 </select>

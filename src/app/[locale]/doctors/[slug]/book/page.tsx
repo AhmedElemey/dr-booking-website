@@ -58,7 +58,7 @@ export default async function BookPage({
             <Link href={`/doctors/${doctor.slug}`} className="hover:underline">
               {doctor.specialty.name}
             </Link>{" "}
-            · {doctor.clinic.name}
+            — {doctor.clinic.name}
           </p>
         </div>
       </header>

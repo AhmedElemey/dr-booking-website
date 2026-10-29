@@ -98,7 +98,7 @@ describe("mock backend", () => {
     expect(upcoming.totalCount).toBe(2);
     expect(past.totalCount).toBe(1);
     expect(upcoming.items[0]).toMatchObject({ status: "Confirmed", timezone: "Africa/Cairo" });
-    expect(upcoming.items[0].startsAtLocal).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:00$/);
+    expect(upcoming.items[0].startsAtLocal).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:00\+0[23]:00$/);
   });
 
   it("books a slot once, then reports SLOT_TAKEN and BOOKING_LIMIT", async () => {

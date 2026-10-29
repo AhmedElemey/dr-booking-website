@@ -127,7 +127,7 @@ export function SlotPicker({
                 role="option"
                 aria-selected={active}
                 onClick={() => setChosenDay(day.date)}
-                className={`flex min-w-20 shrink-0 flex-col items-center rounded-2xl border px-3 py-2 text-sm transition-colors ${
+                className={`flex min-w-20 shrink-0 flex-col items-center rounded-2xl border px-3 py-2 text-sm ${
                   active
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-surface hover:border-primary"
@@ -151,7 +151,7 @@ export function SlotPicker({
 
       <div>
         <h3 className="mb-2 text-sm font-semibold text-muted">
-          {t("pickTime")} · {formatDateKey(activeDate, locale)}
+          {t("pickTime")} — {formatDateKey(activeDate, locale)}
         </h3>
         <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
           {activeDay.slots.map((slot) => {
@@ -162,9 +162,9 @@ export function SlotPicker({
                   type="button"
                   aria-pressed={selected}
                   onClick={() => onSelect({ slot, date: activeDate })}
-                  className={`min-h-11 w-full rounded-xl border px-2 py-2 text-sm font-semibold transition-colors ${
+                  className={`min-h-11 w-full rounded-xl border px-2 py-2 text-sm font-semibold ${
                     selected
-                      ? "border-primary bg-primary text-primary-foreground"
+                      ? "border-primary bg-primary font-bold text-primary-foreground shadow-md ring-2 ring-primary/40"
                       : "border-border bg-surface hover:border-primary"
                   }`}
                 >
