@@ -3,7 +3,10 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 import { directionFor, routing } from "@/i18n/routing";
+import { siteUrl } from "@/lib/api/config";
 
 import "../globals.css";
 
@@ -15,8 +18,13 @@ export async function generateMetadata({
   params,
 }: LayoutProps<"/[locale]">): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "Home" });
-  return { title: t("metaTitle") };
+  const t = await getTranslations({ locale, namespace: "Meta" });
+  return {
+    metadataBase: new URL(siteUrl()),
+    title: { default: t("siteName"), template: `%s | ${t("siteName")}` },
+    description: t("description"),
+    applicationName: t("siteName"),
+  };
 }
 
 export default async function LocaleLayout({
@@ -31,8 +39,12 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} dir={directionFor(locale)} className="h-full antialiased">
-      <body className="min-h-full flex flex-col">
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+      <body className="flex min-h-full flex-col">
+        <NextIntlClientProvider>
+          <SiteHeader />
+          <div className="flex flex-1 flex-col">{children}</div>
+          <SiteFooter />
+        </NextIntlClientProvider>
       </body>
     </html>
   );
