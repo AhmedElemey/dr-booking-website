@@ -16,6 +16,6 @@ npm run build
 - Translations: `messages/{ar,en}.json`
 - Locale routing: `src/i18n/` and `src/proxy.ts`
 - Public config: `.env.development` / `.env.production` (`NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_SITE_URL`). No secrets go in these files.
-- Demo mode: `MOCK_API=1 npm run dev` (or `MOCK_API=1 npx next build && MOCK_API=1 npx next start -p 3100`) serves in-memory fixtures instead of the backend; OTP code `123456`. Off by default.
+- Demo mode: `MOCK_API=1 npm run dev` (or `MOCK_API=1 npx next build && MOCK_API=1 npx next start -p 3100`) serves in-memory fixtures instead of the backend; OTP code `123456`. Off by default. In demo mode all 13 phase-2 features are on (override with `MOCK_FEATURES='{"reviews":false}'`); the demo clock-dependent video visit opens 15 minutes before its start.
 
 Use Tailwind logical utilities (`ms-*`, `ps-*`, `start-*`) so layouts flip correctly in RTL.
