@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "clinic.config.schema.json",
+  "title": "Clinic configuration",
+  "description": "Identity and default feature switches of one clinic. Identical in the backend, website, mobile and console repositories.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["slug", "name", "tagline", "colors", "logo", "supportPhone", "website", "mobile", "console", "features"],
+  "$defs": {
+    "localized": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ar", "en"],
+      "properties": {
+        "ar": { "type": "string", "minLength": 1 },
+        "en": { "type": "string", "minLength": 1 }
+      }
+    },
+    "hexColor": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+  },
+  "properties": {
+    "$schema": { "type": "string" },
+    "slug": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 40 },
+    "name": { "$ref": "#/$defs/localized" },
+    "tagline": { "$ref": "#/$defs/localized" },
+    "colors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "accent"],
+      "properties": {
+        "primary": { "$ref": "#/$defs/hexColor" },
+        "accent": { "$ref": "#/$defs/hexColor" }
+      }
+    },
+    "logo": { "type": "string", "minLength": 1 },
+    "supportPhone": { "type": "string", "pattern": "^\\+?[0-9 ()-]{6,20}$" },
+    "website": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["domain"],
+      "properties": { "domain": { "type": "string", "minLength": 1 } }
+    },
+    "mobile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["androidApplicationId", "iosBundleId"],
+      "properties": {
+        "androidApplicationId": { "type": "string", "minLength": 1 },
+        "iosBundleId": { "type": "string", "minLength": 1 }
+      }
+    },
+    "console": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url", "clinicId"],
+      "properties": {
+        "url": { "type": "string" },
+        "clinicId": { "type": "string" }
+      }
+    },
+    "features": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mobileApp", "website", "guestBrowsing", "patientSelfService", "pushReminders", "smsNotifications", "englishLanguage", "multiBranch"],
+      "properties": {
+        "mobileApp": { "type": "boolean" },
+        "website": { "type": "boolean" },
+        "guestBrowsing": { "type": "boolean" },
+        "patientSelfService": { "type": "boolean" },
+        "pushReminders": { "type": "boolean" },
+        "smsNotifications": { "type": "boolean" },
+        "englishLanguage": { "type": "boolean" },
+        "multiBranch": { "type": "boolean" }
+      }
+    }
+  }
+}
