@@ -1,17 +1,14 @@
 @import "tailwindcss";
 
 :root {
+  /* --primary, --primary-hover, --primary-foreground, --accent and --accent-soft come from
+     clinic.config.json (see src/lib/colors.ts), injected by the locale layout. */
   --background: #f8f8fc;
   --foreground: #161a33;
   --surface: #ffffff;
   --surface-muted: #eef0f8;
   --muted: #5b6080;
   --border: #dfe2f0;
-  --primary: #3f3ccf;
-  --primary-hover: #3330b0;
-  --primary-foreground: #ffffff;
-  --accent: #0e9f9a;
-  --accent-soft: #dcf5f3;
   --danger: #b4233a;
   --danger-soft: #fde8ec;
   --success: #17794b;
@@ -28,11 +25,6 @@
     --surface-muted: #1e2243;
     --muted: #a0a6cc;
     --border: #2b3060;
-    --primary: #8b89ff;
-    --primary-hover: #a3a1ff;
-    --primary-foreground: #0d0f24;
-    --accent: #4fd1c5;
-    --accent-soft: #123a3d;
     --danger: #ff8da1;
     --danger-soft: #3a1626;
     --success: #6fe0a5;

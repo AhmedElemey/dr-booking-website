@@ -1,3 +1,22 @@
+import Image from "next/image";
+
+import { logoPublicPath } from "@/lib/clinic-config";
+
+/** The clinic's logo from clinic.config.json, served by the /logo.svg route. */
+export function BrandLogo({ className = "size-8" }: { className?: string }) {
+  return (
+    <Image
+      src={logoPublicPath()}
+      alt=""
+      width={32}
+      height={32}
+      unoptimized
+      aria-hidden="true"
+      className={className}
+    />
+  );
+}
+
 export function MoonMark({ className = "size-8" }: { className?: string }) {
   return (
     <svg

@@ -5,6 +5,7 @@ import { useCallback, useMemo } from "react";
 
 import { createApiClient } from "@/lib/api/client";
 import { errorKey } from "@/lib/api/errors";
+import { clinicConfig } from "@/lib/clinic-config";
 
 export function useApiClient() {
   const locale = useLocale();
@@ -14,5 +15,8 @@ export function useApiClient() {
 /** Maps any thrown value to a localized, user-facing message keyed by the API error `code`. */
 export function useErrorMessage() {
   const t = useTranslations("Errors");
-  return useCallback((error: unknown) => t(errorKey(error)), [t]);
+  return useCallback(
+    (error: unknown) => t(errorKey(error), { phone: clinicConfig.supportPhone }),
+    [t],
+  );
 }

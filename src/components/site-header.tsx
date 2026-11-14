@@ -2,18 +2,20 @@ import { useTranslations } from "next-intl";
 
 import { Link } from "@/i18n/navigation";
 
-import { LanguageSwitcher } from "./language-switcher";
-import { MoonMark } from "./logo";
+import type { Features } from "@/lib/features";
 
-export function SiteHeader() {
+import { LanguageSwitcher } from "./language-switcher";
+import { BrandLogo } from "./logo";
+
+export function SiteHeader({ features }: { features: Pick<Features, "website" | "englishLanguage"> }) {
   const t = useTranslations("Nav");
   const brand = useTranslations("Common")("brand");
 
   const links = [
-    { href: "/doctors", label: t("doctors") },
+    ...(features.website ? [{ href: "/doctors", label: t("doctors") }] : []),
     { href: "/about", label: t("about") },
     { href: "/contact", label: t("contact") },
-  ] as const;
+  ] as { href: "/doctors" | "/about" | "/contact"; label: string }[];
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
@@ -23,7 +25,7 @@ export function SiteHeader() {
           aria-label={t("home")}
           className="flex items-center gap-2 text-lg font-bold"
         >
-          <MoonMark />
+          <BrandLogo />
           <span>{brand}</span>
         </Link>
 
@@ -43,13 +45,15 @@ export function SiteHeader() {
         </nav>
 
         <div className="ms-auto flex items-center gap-2 sm:ms-0">
-          <Link
-            href="/account/appointments"
-            className="rounded-full bg-surface-muted px-4 py-2 text-sm font-semibold hover:bg-border"
-          >
-            {t("myAppointments")}
-          </Link>
-          <LanguageSwitcher />
+          {features.website ? (
+            <Link
+              href="/account/appointments"
+              className="rounded-full bg-surface-muted px-4 py-2 text-sm font-semibold hover:bg-border"
+            >
+              {t("myAppointments")}
+            </Link>
+          ) : null}
+          {features.englishLanguage ? <LanguageSwitcher /> : null}
         </div>
       </div>
     </header>

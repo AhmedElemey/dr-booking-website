@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { routing } from "@/i18n/routing";
 
 import { siteUrl } from "./api/config";
+import { brandName, brandTagline, clinicConfig, dialablePhone, logoPublicPath } from "./clinic-config";
+import { activeLocales, getFeatures } from "./features";
 import type { DoctorProfile } from "./api/types";
 
 /** Absolute URL of a locale-prefixed path (`/doctors` with `ar` becomes `<site>/ar/doctors`). */
@@ -12,9 +14,13 @@ export function localizedUrl(locale: string, path: string, base = siteUrl()): st
 }
 
 /** hreflang map for every locale, plus `x-default` pointing at the default locale. */
-export function languageAlternates(path: string, base = siteUrl()) {
+export function languageAlternates(
+  path: string,
+  base = siteUrl(),
+  locales: readonly string[] = routing.locales,
+) {
   const languages: Record<string, string> = {};
-  for (const locale of routing.locales) {
+  for (const locale of locales) {
     languages[locale] = localizedUrl(locale, path, base);
   }
   languages["x-default"] = localizedUrl(routing.defaultLocale, path, base);
@@ -31,24 +37,30 @@ type PageMetadataInput = {
 };
 
 /** Title, description, canonical + hreflang alternates and Open Graph for a page. */
-export function pageMetadata({
+export async function pageMetadata(input: PageMetadataInput): Promise<Metadata> {
+  const features = await getFeatures();
+  return buildPageMetadata(input, activeLocales(features));
+}
+
+/** Synchronous core of `pageMetadata`; `locales` are the languages currently served. */
+export function buildPageMetadata({
   locale,
   path,
   title,
   description,
   noIndex,
   image,
-}: PageMetadataInput): Metadata {
+}: PageMetadataInput, locales: readonly string[] = routing.locales): Metadata {
   const url = localizedUrl(locale, path);
   return {
     title,
     description,
-    alternates: { canonical: url, languages: languageAlternates(path) },
+    alternates: { canonical: url, languages: languageAlternates(path, siteUrl(), locales) },
     openGraph: {
       title,
       description,
       url,
-      siteName: "Moonlight",
+      siteName: brandName(locale),
       locale: locale === "ar" ? "ar_EG" : "en_US",
       type: "website",
       ...(image ? { images: [image] } : {}),
@@ -110,4 +122,19 @@ export function buildDoctorJsonLd(
 /** Serializes JSON-LD for a `<script>` tag, escaping `<` so content cannot close it. */
 export function serializeJsonLd(data: unknown): string {
   return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
+/** schema.org `Dentist` (organisation) JSON-LD for the clinic itself, from clinic.config.json. */
+export function buildOrganizationJsonLd(locale: string, base = siteUrl()): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Dentist",
+    "@id": `${base}/#organization`,
+    name: brandName(locale),
+    description: brandTagline(locale),
+    url: localizedUrl(locale, "/", base),
+    logo: `${base}${logoPublicPath()}`,
+    telephone: dialablePhone(clinicConfig.supportPhone),
+    inLanguage: locale,
+  };
 }

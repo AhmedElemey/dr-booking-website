@@ -1,10 +1,10 @@
 {
   "Meta": {
-    "siteName": "Moonlight",
+    "siteName": "{brand}",
     "description": "Find a trusted dentist near you and book a real, open appointment online in under a minute. Pay at the clinic."
   },
   "Common": {
-    "brand": "Moonlight",
+    "brand": "{brand}",
     "loading": "Loading…",
     "retry": "Try again",
     "back": "Back",
@@ -21,7 +21,7 @@
     "contact": "Contact",
     "myAppointments": "My appointments",
     "switchLanguage": "العربية",
-    "home": "Moonlight home",
+    "home": "{brand} home",
     "mainNavigation": "Main navigation"
   },
   "Footer": {
@@ -34,12 +34,12 @@
     "apps": "Get the app",
     "appStore": "App Store",
     "googlePlay": "Google Play",
-    "forClinics": "Doctor or clinic staff? Manage your schedule in the Moonlight dashboard.",
-    "rights": "© {year} Moonlight. All rights reserved."
+    "forClinics": "Doctor or clinic staff? Manage your schedule in the {brand} dashboard.",
+    "rights": "© {year} {brand}. All rights reserved."
   },
   "Home": {
-    "metaTitle": "Moonlight: book your dentist online in Egypt",
-    "metaDescription": "Search dentists by specialty and city, see real open slots and book instantly. Moonlight makes dental care easy to reach in Cairo and across Egypt.",
+    "metaTitle": "{brand}: book your dentist online in Egypt",
+    "metaDescription": "Search dentists by specialty and city, see real open slots and book instantly. {brand} makes dental care easy to reach in Cairo and across Egypt.",
     "heroEyebrow": "Dental appointments, simplified",
     "heroTitle": "Find a dentist and book in minutes",
     "heroSubtitle": "Browse trusted dentists, see their real open times and confirm your visit instantly. No calls, no waiting, pay at the clinic.",
@@ -58,15 +58,15 @@
     "step2Text": "Every slot you see is free. Choose the one that fits your day.",
     "step3Title": "Confirm with your phone",
     "step3Text": "Verify your mobile number with a one-time code and your booking is confirmed instantly.",
-    "benefitsTitle": "Why patients choose Moonlight",
+    "benefitsTitle": "Why patients choose {brand}",
     "benefit1Title": "Instant confirmation",
     "benefit1Text": "No waiting for the clinic to call back. Your booking is confirmed on the spot.",
     "benefit2Title": "Pay at the clinic",
     "benefit2Text": "Nothing to pay online. Prices shown are for information only.",
     "benefit3Title": "Free changes",
     "benefit3Text": "Cancel or reschedule from your account up to two hours before your visit.",
-    "appTitle": "Take Moonlight with you",
-    "appText": "Book, get reminders 24 hours before your visit and manage appointments from the Moonlight app.",
+    "appTitle": "Take {brand} with you",
+    "appText": "Book, get reminders 24 hours before your visit and manage appointments from the {brand} app.",
     "ctaTitle": "Ready for a healthier smile?",
     "ctaButton": "Find a dentist"
   },
@@ -161,7 +161,7 @@
     "viewAppointments": "View my appointments",
     "backToDoctors": "Find another dentist",
     "calendarSummary": "Dentist appointment with {name}",
-    "clinicAccount": "This phone number belongs to a clinic account. Please use the Moonlight dashboard, or sign in with a patient number."
+    "clinicAccount": "This phone number belongs to a clinic account. Please use the {brand} dashboard, or sign in with a patient number."
   },
   "Login": {
     "phoneLabel": "Mobile number",
@@ -219,18 +219,19 @@
     "cancelledByClinic": "Cancelled by the clinic",
     "cancelledByYou": "Cancelled by you",
     "rebook": "Book again",
-    "clinicAccount": "This is a clinic account. Please use the Moonlight dashboard to manage appointments.",
-    "pastNote": "This visit has already taken place."
+    "clinicAccount": "This is a clinic account. Please use the {brand} dashboard to manage appointments.",
+    "pastNote": "This visit has already taken place.",
+    "selfServiceOff": "Cancelling and rescheduling online is not available. To change this visit, please call the clinic on {phone}."
   },
   "About": {
-    "metaTitle": "About Moonlight",
-    "metaDescription": "Moonlight connects patients in Egypt with trusted dentists and real, bookable appointments.",
-    "title": "About Moonlight",
-    "intro": "Moonlight is a dental booking platform built for Egypt. We believe that booking a dentist should take a minute, not a week of phone calls.",
+    "metaTitle": "About {brand}",
+    "metaDescription": "{brand} connects patients in Egypt with trusted dentists and real, bookable appointments.",
+    "title": "About {brand}",
+    "intro": "{brand} is a dental booking platform built for Egypt. We believe that booking a dentist should take a minute, not a week of phone calls.",
     "sections": [
       {
         "title": "Real availability",
-        "body": "Clinics publish the exact times they are free. When you see a time on Moonlight, it is open, and the moment you book it, it is yours."
+        "body": "Clinics publish the exact times they are free. When you see a time on {brand}, it is open, and the moment you book it, it is yours."
       },
       {
         "title": "Simple for patients",
@@ -238,19 +239,19 @@
       },
       {
         "title": "Built with clinics",
-        "body": "Doctors and clinic staff manage their profile, treatments and schedule from the Moonlight dashboard, and see bookings the moment they are made."
+        "body": "Doctors and clinic staff manage their profile, treatments and schedule from the {brand} dashboard, and see bookings the moment they are made."
       },
       {
         "title": "Arabic first",
-        "body": "Moonlight is available in Arabic and English, with times shown in the clinic’s own timezone."
+        "body": "{brand} is available in Arabic and English, with times shown in the clinic’s own timezone."
       }
     ]
   },
   "Contact": {
     "metaTitle": "Contact us",
-    "metaDescription": "Questions about a booking or Moonlight for your clinic? Get in touch with the Moonlight team.",
+    "metaDescription": "Questions about a booking or {brand} for your clinic? Get in touch with the {brand} team.",
     "title": "Contact us",
-    "intro": "Questions about a booking, feedback, or interested in Moonlight for your clinic? We would love to hear from you.",
+    "intro": "Questions about a booking, feedback, or interested in {brand} for your clinic? We would love to hear from you.",
     "email": "Email",
     "phone": "Phone",
     "hours": "Support hours",
@@ -258,20 +259,20 @@
     "address": "Office",
     "addressValue": "Cairo, Egypt",
     "clinicsTitle": "For clinics and doctors",
-    "clinicsText": "Moonlight clinic accounts are created by our team. Write to us and we will get your clinic set up, then manage everything from the dashboard.",
+    "clinicsText": "{brand} clinic accounts are created by our team. Write to us and we will get your clinic set up, then manage everything from the dashboard.",
     "patientsTitle": "Need to change a booking?",
     "patientsText": "You can cancel or reschedule on your own from your account, up to two hours before the visit."
   },
   "Terms": {
     "metaTitle": "Terms of use",
-    "metaDescription": "The terms that apply when you use Moonlight to find a dentist and book appointments.",
+    "metaDescription": "The terms that apply when you use {brand} to find a dentist and book appointments.",
     "title": "Terms of use",
     "updated": "Last updated: October 2026",
-    "intro": "These terms explain how you may use the Moonlight website and booking service. By using it, you agree to them.",
+    "intro": "These terms explain how you may use the {brand} website and booking service. By using it, you agree to them.",
     "sections": [
       {
         "title": "The service",
-        "body": "Moonlight lets you find dentists, view the appointment times they publish and book them. Moonlight is a booking platform. Treatment is provided by the clinics and doctors, who are responsible for it."
+        "body": "{brand} lets you find dentists, view the appointment times they publish and book them. {brand} is a booking platform. Treatment is provided by the clinics and doctors, who are responsible for it."
       },
       {
         "title": "Your account",
@@ -283,7 +284,7 @@
       },
       {
         "title": "Fees",
-        "body": "Payment is made at the clinic. Fees and prices shown on Moonlight are informational and may differ from the clinic’s final charges."
+        "body": "Payment is made at the clinic. Fees and prices shown on {brand} are informational and may differ from the clinic’s final charges."
       },
       {
         "title": "Acceptable use",
@@ -297,10 +298,10 @@
   },
   "Privacy": {
     "metaTitle": "Privacy policy",
-    "metaDescription": "How Moonlight collects, uses and protects your personal data.",
+    "metaDescription": "How {brand} collects, uses and protects your personal data.",
     "title": "Privacy policy",
     "updated": "Last updated: October 2026",
-    "intro": "Your privacy matters to us. This policy explains what we collect when you use the Moonlight website and why.",
+    "intro": "Your privacy matters to us. This policy explains what we collect when you use the {brand} website and why.",
     "sections": [
       {
         "title": "What we collect",
@@ -346,7 +347,8 @@
     "RATE_LIMITED": "Too many attempts. Please wait a moment and try again.",
     "INTERNAL_ERROR": "Something went wrong on our side. Please try again shortly.",
     "NETWORK_ERROR": "We could not reach the server. Check your connection and try again.",
-    "UNKNOWN": "Something went wrong. Please try again."
+    "UNKNOWN": "Something went wrong. Please try again.",
+    "FEATURE_DISABLED": "This service is not available online. Please call the clinic on {phone}."
   },
   "ErrorPage": {
     "title": "Something went wrong",
@@ -354,5 +356,12 @@
     "notFoundTitle": "Page not found",
     "notFoundText": "The page you are looking for does not exist or has moved.",
     "goHome": "Back to home"
+  },
+  "Gate": {
+    "metaTitle": "Online booking unavailable",
+    "title": "Online booking is not available",
+    "text": "Booking online is not available right now. Please call us on {phone} and we will be happy to help.",
+    "call": "Call {phone}",
+    "home": "Back to home"
   }
 }

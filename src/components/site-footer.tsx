@@ -1,11 +1,13 @@
 import { useLocale, useTranslations } from "next-intl";
 
 import { Link } from "@/i18n/navigation";
+import { brandTagline } from "@/lib/clinic-config";
 import { formatPlain } from "@/lib/datetime";
+import type { Features } from "@/lib/features";
 
-import { MoonMark } from "./logo";
+import { BrandLogo } from "./logo";
 
-export function SiteFooter() {
+export function SiteFooter({ features }: { features: Pick<Features, "website"> }) {
   const t = useTranslations("Footer");
   const locale = useLocale();
   const nav = useTranslations("Nav");
@@ -16,16 +18,22 @@ export function SiteFooter() {
       <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-lg font-bold">
-            <MoonMark />
+            <BrandLogo />
             {brand}
           </div>
-          <p className="max-w-xs text-sm opacity-75">{t("tagline")}</p>
+          <p className="max-w-xs text-sm opacity-75">{brandTagline(locale)}</p>
           <p className="max-w-xs text-sm opacity-60">{t("forClinics")}</p>
         </div>
 
         <FooterColumn title={t("explore")}>
-          <Link href="/doctors">{nav("doctors")}</Link>
-          <Link href="/account/appointments">{nav("myAppointments")}</Link>
+          {features.website ? (
+            <>
+              <Link href="/doctors">{nav("doctors")}</Link>
+              <Link href="/account/appointments">{nav("myAppointments")}</Link>
+            </>
+          ) : (
+            <Link href="/">{nav("home")}</Link>
+          )}
         </FooterColumn>
 
         <FooterColumn title={t("company")}>

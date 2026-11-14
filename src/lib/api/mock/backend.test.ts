@@ -160,3 +160,35 @@ describe("mock backend request bodies", () => {
     expect(res.status).toBe(201);
   });
 });
+
+describe("feature switches in the mock", () => {
+  const original = process.env.MOCK_FEATURES;
+  afterEach(() => {
+    if (original === undefined) delete process.env.MOCK_FEATURES;
+    else process.env.MOCK_FEATURES = original;
+  });
+
+  it("serves GET /features with the config defaults and demo overrides", async () => {
+    const body = (await (await call("/features")).json()) as { features: Record<string, boolean>; source: string };
+    expect(body.features).toMatchObject({ website: true, guestBrowsing: true, englishLanguage: true });
+    expect(body.source).toBe("defaults");
+    process.env.MOCK_FEATURES = '{"website":false,"nonsense":true}';
+    const overridden = (await (await call("/features")).json()) as { features: Record<string, boolean> };
+    expect(overridden.features.website).toBe(false);
+    expect(overridden.features).not.toHaveProperty("nonsense");
+  });
+
+  it("requires sign-in for doctors when guest browsing is off", async () => {
+    process.env.MOCK_FEATURES = '{"guestBrowsing":false}';
+    expect((await call("/doctors")).status).toBe(401);
+    expect((await call("/doctors", { headers: AUTH })).status).toBe(200);
+  });
+
+  it("answers cancel and reschedule with 403 FEATURE_DISABLED when self service is off", async () => {
+    const list = (await (await call("/appointments?scope=upcoming", { headers: AUTH })).json()) as Paged<Appointment>;
+    process.env.MOCK_FEATURES = '{"patientSelfService":false}';
+    const res = await post(`/appointments/${list.items[0].id}/cancel`, {});
+    expect(res.status).toBe(403);
+    expect(await res.json()).toMatchObject({ code: "FEATURE_DISABLED", feature: "patientSelfService" });
+  });
+});

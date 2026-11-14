@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { DoctorProfile } from "./api/types";
-import { buildDoctorJsonLd, languageAlternates, localizedUrl, pageMetadata, serializeJsonLd } from "./seo";
+import { buildDoctorJsonLd, buildPageMetadata, languageAlternates, localizedUrl, serializeJsonLd } from "./seo";
 
 const BASE = "https://moonlight.example";
 
@@ -44,7 +44,7 @@ describe("urls and hreflang", () => {
 
 describe("pageMetadata", () => {
   it("sets canonical, hreflang alternates and Open Graph for the locale", () => {
-    const meta = pageMetadata({
+    const meta = buildPageMetadata({
       locale: "en",
       path: "/doctors/sara-hassan",
       title: "Dr. Sara Hassan",
@@ -57,7 +57,7 @@ describe("pageMetadata", () => {
   });
 
   it("marks private pages noindex", () => {
-    const meta = pageMetadata({ locale: "ar", path: "/account/appointments", title: "t", description: "d", noIndex: true });
+    const meta = buildPageMetadata({ locale: "ar", path: "/account/appointments", title: "t", description: "d", noIndex: true });
     expect(meta.robots).toEqual({ index: false, follow: false });
   });
 });

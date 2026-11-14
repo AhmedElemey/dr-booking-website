@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { card, container } from "@/components/ui";
+import { clinicConfig, contactEmail, dialablePhone } from "@/lib/clinic-config";
 import { pageMetadata } from "@/lib/seo";
 
-const CONTACT_EMAIL = "hello@moonlight.example";
-const CONTACT_PHONE = "+20 2 5550 0100";
+// Feature switches (and so the nav around this page) can change; keep it fresh.
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,
@@ -33,14 +34,14 @@ export default async function ContactPage({ params }: PageProps<"/[locale]/conta
       <dl className={`${card} grid gap-4 sm:grid-cols-[auto_1fr] sm:gap-x-8`}>
         <dt className="font-medium text-muted">{t("email")}</dt>
         <dd>
-          <a href={`mailto:${CONTACT_EMAIL}`} dir="ltr" className="font-semibold text-primary hover:underline">
-            {CONTACT_EMAIL}
+          <a href={`mailto:${contactEmail()}`} dir="ltr" className="font-semibold text-primary hover:underline">
+            {contactEmail()}
           </a>
         </dd>
         <dt className="font-medium text-muted">{t("phone")}</dt>
         <dd>
-          <a href={`tel:${CONTACT_PHONE.replace(/\s/g, "")}`} dir="ltr" className="font-semibold hover:underline">
-            {CONTACT_PHONE}
+          <a href={`tel:${dialablePhone()}`} dir="ltr" className="font-semibold hover:underline">
+            {clinicConfig.supportPhone}
           </a>
         </dd>
         <dt className="font-medium text-muted">{t("hours")}</dt>

@@ -1,3 +1,4 @@
+import { catalogAuthHeaders } from "../gates";
 import { backendFetch } from "./backend";
 import { parseResponse } from "./errors";
 import type {
@@ -17,7 +18,11 @@ const CATALOG_REVALIDATE_SECONDS = 60;
 
 async function getJson<T>(path: string, locale: string): Promise<T> {
   const res = await backendFetch(path, {
-    headers: { Accept: "application/json", "Accept-Language": locale },
+    headers: {
+      Accept: "application/json",
+      "Accept-Language": locale,
+      ...(await catalogAuthHeaders()),
+    },
     next: { revalidate: CATALOG_REVALIDATE_SECONDS },
   });
   return parseResponse<T>(res);
