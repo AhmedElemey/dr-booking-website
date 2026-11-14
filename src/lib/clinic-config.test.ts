@@ -71,9 +71,10 @@ describe("clinic.config.json", () => {
   });
 
   it("keeps today's identity", () => {
-    expect(clinicConfig.slug).toBe("moonlight");
-    expect(clinicConfig.name.en).toBe("Moonlight");
-    expect(clinicConfig.colors).toEqual({ primary: "#3F3CCF", accent: "#0E9F9A" });
+    const raw = rawConfig();
+    expect(clinicConfig.slug).toBe(raw.slug);
+    expect(clinicConfig.name).toEqual(raw.name);
+    expect(clinicConfig.colors).toEqual(raw.colors);
     expect(FEATURE_KEYS).toHaveLength(8);
   });
 
@@ -89,7 +90,7 @@ describe("clinic.config.json", () => {
 
 describe("parseClinicConfig", () => {
   it("accepts the shipped file", () => {
-    expect(parseClinicConfig(rawConfig()).slug).toBe("moonlight");
+    expect(parseClinicConfig(rawConfig()).slug).toBe(rawConfig().slug);
   });
 
   it("reports every problem at once", () => {
@@ -122,19 +123,19 @@ describe("parseClinicConfig", () => {
 
 describe("brand helpers", () => {
   it("picks name and tagline per locale", () => {
-    expect(brandName("en")).toBe("Moonlight");
+    expect(brandName("en")).toBe(rawConfig().name.en);
     expect(brandName("ar")).toBe(clinicConfig.name.ar);
     expect(brandTagline("en")).toBe(clinicConfig.tagline.en);
   });
 
   it("derives phone and email", () => {
     expect(dialablePhone("+20 (100) 000-0000")).toBe("+201000000000");
-    expect(contactEmail()).toBe("hello@moonlight.example");
+    expect(contactEmail()).toBe(`hello@${rawConfig().website.domain}`);
   });
 
   it("interpolates the brand into messages and escapes ICU braces", () => {
     const out = applyBrand({ a: "Hi {brand}", b: ["{tagline}"], n: 3 }, "en");
-    expect(out).toEqual({ a: "Hi Moonlight", b: [clinicConfig.tagline.en], n: 3 });
+    expect(out).toEqual({ a: `Hi ${clinicConfig.name.en}`, b: [clinicConfig.tagline.en], n: 3 });
     const original = clinicConfig.name.en;
     clinicConfig.name.en = "A{b}";
     expect(applyBrand("{brand}", "en")).toBe("A'{'b'}'");

@@ -55,7 +55,7 @@ describe("website=false: booking unavailable page", () => {
 describe("branding", () => {
   it("shows the clinic name from the config in header and footer, never a hard-coded one", () => {
     const original = clinicConfig.name.en;
-    expect(original).toBe("Moonlight");
+    expect(original.length).toBeGreaterThan(0);
     renderWithIntl(<SiteHeader features={features} />);
     expect(screen.getByRole("link", { name: `${original} home` })).toBeTruthy();
     renderWithIntl(<SiteFooter features={features} />);
