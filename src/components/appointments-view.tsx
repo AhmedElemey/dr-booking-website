@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 
 import { Link } from "@/i18n/navigation";
+import { clinicConfig } from "@/lib/clinic-config";
 import { ApiError } from "@/lib/api/errors";
 import type { Appointment, User } from "@/lib/api/types";
 import {
@@ -41,7 +42,7 @@ type View =
       past: Appointment[];
     };
 
-export function AppointmentsView() {
+export function AppointmentsView({ selfService = true }: { selfService?: boolean }) {
   const t = useTranslations("Account");
   const common = useTranslations("Common");
   const api = useApiClient();
@@ -175,7 +176,11 @@ export function AppointmentsView() {
         ))}
       </div>
 
-      {tab === "upcoming" ? <p className="text-sm text-muted">{t("windowHint")}</p> : null}
+      {tab === "upcoming" ? (
+        <p className="text-sm text-muted">
+          {selfService ? t("windowHint") : t("selfServiceOff", { phone: clinicConfig.supportPhone })}
+        </p>
+      ) : null}
 
       {list.length === 0 ? (
         <div className={`${card} space-y-3 text-center`}>
@@ -194,6 +199,7 @@ export function AppointmentsView() {
               <AppointmentCard
                 appointment={appointment}
                 upcoming={tab === "upcoming"}
+                selfService={selfService}
                 onChanged={(message) => {
                   setFlash(message);
                   reload();
@@ -217,10 +223,12 @@ const STATUS_STYLE: Record<Appointment["status"], string> = {
 function AppointmentCard({
   appointment,
   upcoming,
+  selfService,
   onChanged,
 }: {
   appointment: Appointment;
   upcoming: boolean;
+  selfService: boolean;
   onChanged: (message: string) => void;
 }) {
   const t = useTranslations("Account");
@@ -338,7 +346,7 @@ function AppointmentCard({
           <a href={mapsHref} target="_blank" rel="noopener noreferrer" className={btnSecondary}>
             {t("directions")}
           </a>
-          {active ? (
+          {active && selfService ? (
             <>
               <button type="button" className={btnSecondary} onClick={() => setMode("reschedule")}>
                 {t("reschedule")}

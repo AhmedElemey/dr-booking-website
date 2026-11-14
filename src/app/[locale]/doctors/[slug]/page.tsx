@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
+import { BookingUnavailable } from "@/components/booking-unavailable";
 import { DoctorAvatar } from "@/components/doctor-card";
 import { btnPrimary, card, container } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
@@ -16,6 +17,8 @@ import {
   formatPlain,
   todayInZone,
 } from "@/lib/datetime";
+import { catalogAccess, redirectToLogin } from "@/lib/gates";
+import { getFeatures } from "@/lib/features";
 import { orFallback } from "@/lib/safe";
 import { buildDoctorJsonLd, pageMetadata, serializeJsonLd } from "@/lib/seo";
 
@@ -24,6 +27,8 @@ async function loadDoctor(locale: string, slug: string) {
     return await getDoctor(locale, slug);
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) notFound();
+    // The session expired while guest browsing is off.
+    if (error instanceof ApiError && error.status === 401) redirectToLogin(locale);
     throw error;
   }
 }
@@ -32,8 +37,18 @@ export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/doctors/[slug]">): Promise<Metadata> {
   const { locale, slug } = await params;
-  const doctor = await loadDoctor(locale, slug);
   const t = await getTranslations({ locale, namespace: "Profile" });
+  if ((await catalogAccess()) !== "open") {
+    const gate = await getTranslations({ locale, namespace: "Gate" });
+    return pageMetadata({
+      locale,
+      path: `/doctors/${slug}`,
+      title: gate("metaTitle"),
+      description: gate("metaTitle"),
+      noIndex: true,
+    });
+  }
+  const doctor = await loadDoctor(locale, slug);
   return pageMetadata({
     locale,
     path: `/doctors/${doctor.slug}`,
@@ -60,6 +75,11 @@ export default async function DoctorProfilePage({
   const t = await getTranslations({ locale, namespace: "Profile" });
   const common = await getTranslations({ locale, namespace: "Common" });
   const doctors = await getTranslations({ locale, namespace: "Doctors" });
+
+  const access = await catalogAccess();
+  if (access === "unavailable") return <BookingUnavailable />;
+  if (access === "login") redirectToLogin(locale);
+  const { multiBranch } = await getFeatures();
 
   const doctor = await loadDoctor(locale, slug);
   const { clinic } = doctor;
@@ -107,7 +127,7 @@ export default async function DoctorProfilePage({
               <h1 className="text-3xl font-extrabold">{doctor.name}</h1>
               <p className="text-lg font-medium text-accent">{doctor.specialty.name}</p>
               <p className="text-muted">
-                {clinic.name} — {cityLabel(clinic.city, locale)}
+                {multiBranch ? `${clinic.name} — ${cityLabel(clinic.city, locale)}` : clinic.name}
               </p>
             </div>
           </header>

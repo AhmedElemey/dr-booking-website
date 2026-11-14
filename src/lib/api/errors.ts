@@ -17,6 +17,7 @@ export const ERROR_CODES = [
   "BOOKING_LIMIT",
   "RATE_LIMITED",
   "INTERNAL_ERROR",
+  "FEATURE_DISABLED",
 ] as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[number];
@@ -26,6 +27,7 @@ export type ProblemDetails = {
   title?: string;
   status?: number;
   code?: string;
+  feature?: string;
   detail?: string;
   traceId?: string;
   errors?: Record<string, string[]>;

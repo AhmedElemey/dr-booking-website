@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { BookingUnavailable } from "@/components/booking-unavailable";
+import { CityField } from "@/components/city-field";
 import { DoctorCard } from "@/components/doctor-card";
 import { btnPrimary, btnSecondary, card, container, inputClass, labelClass } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
-import { cityLabel } from "@/lib/cities";
+import { ApiError } from "@/lib/api/errors";
 import { getCities, getSpecialties, searchDoctors } from "@/lib/api/server";
+import { getFeatures } from "@/lib/features";
+import { catalogAccess, redirectToLogin } from "@/lib/gates";
 import { formatNumber } from "@/lib/datetime";
 import { orFallback } from "@/lib/safe";
 import { pageMetadata } from "@/lib/seo";
@@ -47,6 +51,17 @@ export async function generateMetadata({
   const filters = readFilters(await searchParams);
   const t = await getTranslations({ locale, namespace: "Doctors" });
 
+  if ((await catalogAccess()) !== "open") {
+    const gate = await getTranslations({ locale, namespace: "Gate" });
+    return pageMetadata({
+      locale,
+      path: "/doctors",
+      title: gate("metaTitle"),
+      description: gate("metaTitle"),
+      noIndex: true,
+    });
+  }
+
   let title = t("metaTitle");
   if (filters.specialtyId) {
     const specialties = await orFallback(getSpecialties(locale), []);
@@ -72,20 +87,30 @@ export default async function DoctorsPage({
   const t = await getTranslations({ locale, namespace: "Doctors" });
   const filters = readFilters(await searchParams);
 
+  const access = await catalogAccess();
+  if (access === "unavailable") return <BookingUnavailable />;
+  if (access === "login") redirectToLogin(locale);
+
+  const { multiBranch } = await getFeatures();
   const [specialties, cities, results] = await Promise.all([
     orFallback(getSpecialties(locale), []),
-    orFallback(getCities(locale), []),
+    multiBranch ? orFallback(getCities(locale), []) : Promise.resolve([]),
     searchDoctors(locale, {
       q: filters.q,
-      city: filters.city,
+      // Single-branch clinics have no city filter, so ignore a stale ?city= link.
+      city: multiBranch ? filters.city : undefined,
       specialtyId: filters.specialtyId,
       page: filters.page,
       pageSize: PAGE_SIZE,
+    }).catch((error: unknown) => {
+      // The session expired while guest browsing is off.
+      if (error instanceof ApiError && error.status === 401) redirectToLogin(locale);
+      throw error;
     }),
   ]);
 
   const totalPages = Math.max(1, Math.ceil(results.totalCount / results.pageSize));
-  const hasFilters = Boolean(filters.q || filters.city || filters.specialtyId);
+  const hasFilters = Boolean(filters.q || (multiBranch && filters.city) || filters.specialtyId);
 
   return (
     <main className={`${container} py-10`}>
@@ -126,24 +151,15 @@ export default async function DoctorsPage({
                 ))}
               </select>
             </div>
-            <div>
-              <label htmlFor="f-city" className={labelClass}>
-                {t("cityLabel")}
-              </label>
-              <select
-                id="f-city"
-                name="city"
-                defaultValue={filters.city ?? ""}
-                className={inputClass}
-              >
-                <option value="">{t("allCities")}</option>
-                {cities.map((city) => (
-                  <option key={city} value={city}>
-                    {cityLabel(city, locale)}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <CityField
+              enabled={multiBranch}
+              id="f-city"
+              cities={cities}
+              value={filters.city}
+              locale={locale}
+              label={t("cityLabel")}
+              allLabel={t("allCities")}
+            />
             <div className="flex flex-wrap gap-2">
               <button type="submit" className={btnPrimary}>
                 {t("apply")}

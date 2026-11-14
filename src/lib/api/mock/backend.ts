@@ -5,6 +5,7 @@ import {
   todayInZone,
   zonedTimeToUtc,
 } from "../../datetime";
+import { clinicConfig, FEATURE_KEYS, type Features } from "../../clinic-config";
 import { clinic, doctors, MOCK_OTP, MOCK_TIMEZONE, patient, specialties } from "./fixtures";
 import type { MockDoctor } from "./fixtures";
 
@@ -170,10 +171,12 @@ const PROBLEM_TEXT: Record<string, { status: number; ar: string; en: string }> =
   SLOT_UNAVAILABLE: { status: 409, ar: "هذا الموعد لم يعد متاحًا.", en: "This slot is no longer available." },
   BOOKING_LIMIT: { status: 409, ar: "وصلت إلى الحد الأقصى للحجوزات القادمة.", en: "You have reached the upcoming bookings limit." },
   CANCEL_WINDOW_PASSED: { status: 409, ar: "انتهت مهلة التعديل أو الإلغاء.", en: "The cancel window has passed." },
+  FORBIDDEN: { status: 403, ar: "غير مسموح.", en: "Not allowed." },
+  FEATURE_DISABLED: { status: 403, ar: "هذه الخدمة غير متاحة عبر الإنترنت.", en: "This feature is not available." },
   INVALID_TRANSITION: { status: 409, ar: "لا يمكن تنفيذ هذا الإجراء.", en: "This action is not allowed." },
 };
 
-function problem(code: keyof typeof PROBLEM_TEXT, lang: Lang): Response {
+function problem(code: keyof typeof PROBLEM_TEXT, lang: Lang, feature?: string): Response {
   const p = PROBLEM_TEXT[code];
   return Response.json(
     {
@@ -183,9 +186,27 @@ function problem(code: keyof typeof PROBLEM_TEXT, lang: Lang): Response {
       code,
       detail: p[lang],
       traceId: "00-mock",
+      ...(feature ? { feature } : {}),
     },
     { status: p.status, headers: { "content-type": "application/problem+json" } },
   );
+}
+
+/**
+ * Demo feature switches: the clinic.config.json defaults, overridden by the
+ * `MOCK_FEATURES` env var (a JSON object such as `{"website":false}`).
+ */
+export function mockFeatures(): Features {
+  const features = { ...clinicConfig.features };
+  try {
+    const override = JSON.parse(process.env.MOCK_FEATURES || "{}") as Record<string, unknown>;
+    for (const key of FEATURE_KEYS) {
+      if (typeof override[key] === "boolean") features[key] = override[key];
+    }
+  } catch {
+    // Ignore malformed overrides.
+  }
+  return features;
 }
 
 function localized<T extends { ar: string; en: string }>(value: T, lang: Lang) {
@@ -338,6 +359,17 @@ export async function handleMockRequest(
   const s = state();
   const [root, second, third] = segments;
 
+  const features = mockFeatures();
+
+  if (method === "GET" && root === "features" && !second) {
+    return Response.json({ features, source: "defaults", updatedAt: new Date(0).toISOString() });
+  }
+
+  // Doctor search/profile/slots need a sign-in when guest browsing is off.
+  if (root === "doctors" && !features.guestBrowsing && !isAuthed(headers)) {
+    return problem("UNAUTHORIZED", lang);
+  }
+
   // Public catalog
   if (method === "GET" && root === "specialties") {
     return Response.json(specialties.map((x) => specialtyDto(x.id, lang)));
@@ -471,6 +503,9 @@ export async function handleMockRequest(
       if (method === "GET" && !third) return Response.json(appointmentDto(appt, lang));
 
       if (method === "POST" && (third === "cancel" || third === "reschedule")) {
+        if (!features.patientSelfService) {
+          return problem("FEATURE_DISABLED", lang, "patientSelfService");
+        }
         if (appt.status !== "Confirmed") return problem("INVALID_TRANSITION", lang);
         if (slot.startsAt.getTime() - now.getTime() < CANCEL_WINDOW_HOURS * 3_600_000) {
           return problem("CANCEL_WINDOW_PASSED", lang);

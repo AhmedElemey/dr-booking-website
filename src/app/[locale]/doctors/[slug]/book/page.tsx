@@ -3,11 +3,13 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { BookingFlow } from "@/components/booking-flow";
+import { BookingUnavailable } from "@/components/booking-unavailable";
 import { DoctorAvatar } from "@/components/doctor-card";
 import { container } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { ApiError } from "@/lib/api/errors";
 import { getDoctor } from "@/lib/api/server";
+import { bookingAccess } from "@/lib/gates";
 import { pageMetadata } from "@/lib/seo";
 
 async function loadDoctor(locale: string, slug: string) {
@@ -23,8 +25,18 @@ export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/doctors/[slug]/book">): Promise<Metadata> {
   const { locale, slug } = await params;
-  const doctor = await loadDoctor(locale, slug);
   const t = await getTranslations({ locale, namespace: "Booking" });
+  if ((await bookingAccess()) !== "open") {
+    const gate = await getTranslations({ locale, namespace: "Gate" });
+    return pageMetadata({
+      locale,
+      path: `/doctors/${slug}/book`,
+      title: gate("metaTitle"),
+      description: gate("metaTitle"),
+      noIndex: true,
+    });
+  }
+  const doctor = await loadDoctor(locale, slug);
   return pageMetadata({
     locale,
     path: `/doctors/${doctor.slug}/book`,
@@ -41,6 +53,7 @@ export default async function BookPage({
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Booking" });
   const doctors = await getTranslations({ locale, namespace: "Doctors" });
+  if ((await bookingAccess()) !== "open") return <BookingUnavailable />;
   const doctor = await loadDoctor(locale, slug);
 
   return (
