@@ -202,6 +202,11 @@ describe("request guards", () => {
     expect(isProxiedPath(["me"])).toBe(true);
     expect(isProxiedPath(["appointments", "abc", "cancel"])).toBe(true);
     expect(isProxiedPath(["doctors", "dr-x", "slots"])).toBe(true);
+    expect(isProxiedPath(["waiting-list"])).toBe(true);
+    expect(isProxiedPath(["coupons", "validate"])).toBe(true);
+    expect(isProxiedPath(["payments", "p1"])).toBe(true);
+    expect(isProxiedPath(["payments", "webhook", "paymob"])).toBe(false);
+    expect(isProxiedPath(["payments", "mock-checkout", "p1"])).toBe(false);
     expect(isProxiedPath(["dashboard", "appointments"])).toBe(false);
     expect(isProxiedPath(["admin", "clinics"])).toBe(false);
     expect(isProxiedPath(["auth", "refresh"])).toBe(false);

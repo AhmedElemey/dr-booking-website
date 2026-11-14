@@ -18,6 +18,14 @@ export const ERROR_CODES = [
   "RATE_LIMITED",
   "INTERNAL_ERROR",
   "FEATURE_DISABLED",
+  "CLINIC_CLOSED",
+  "COUPON_INVALID",
+  "ALREADY_REVIEWED",
+  "NOT_REVIEWABLE",
+  "PAYMENT_NOT_ALLOWED",
+  "VIDEO_NOT_OPEN",
+  "ALREADY_WAITING",
+  "PROVIDER_ERROR",
 ] as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[number];
@@ -28,6 +36,8 @@ export type ProblemDetails = {
   status?: number;
   code?: string;
   feature?: string;
+  /** `COUPON_INVALID` only: why the code was refused. */
+  reason?: string;
   detail?: string;
   traceId?: string;
   errors?: Record<string, string[]>;
@@ -37,18 +47,21 @@ export class ApiError extends Error {
   readonly status: number;
   readonly code: string;
   readonly fieldErrors?: Record<string, string[]>;
+  readonly reason?: string;
 
   constructor(
     status: number,
     code: string,
     message: string,
     fieldErrors?: Record<string, string[]>,
+    reason?: string,
   ) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.code = code;
     this.fieldErrors = fieldErrors;
+    this.reason = reason;
   }
 }
 
@@ -84,6 +97,7 @@ export async function errorFromResponse(res: Response): Promise<ApiError> {
     code,
     problem.detail ?? problem.title ?? `Request failed with status ${res.status}`,
     problem.errors,
+    typeof problem.reason === "string" ? problem.reason : undefined,
   );
 }
 
@@ -102,4 +116,22 @@ export function errorKey(error: unknown): ErrorCode | "NETWORK_ERROR" | "UNKNOWN
   }
   if (error instanceof TypeError) return "NETWORK_ERROR";
   return "UNKNOWN";
+}
+
+const COUPON_REASONS = [
+  "NotFound",
+  "Expired",
+  "NotStarted",
+  "Exhausted",
+  "PerPatientLimit",
+  "NotApplicable",
+  "NoPrice",
+] as const;
+
+/** Translation key (under `Coupon.reason`) for a refused coupon, from a `reason` or a `COUPON_INVALID` error. */
+export function couponReasonKey(source: unknown): (typeof COUPON_REASONS)[number] | "Unknown" {
+  const reason = source instanceof ApiError ? source.reason : source;
+  return (COUPON_REASONS as readonly unknown[]).includes(reason)
+    ? (reason as (typeof COUPON_REASONS)[number])
+    : "Unknown";
 }

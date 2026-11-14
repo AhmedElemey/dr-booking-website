@@ -95,10 +95,20 @@ const PROXIED_ROOTS = new Set([
   "doctors",
   "specialties",
   "cities",
+  // Phase 2 patient endpoints (the API answers 403 FEATURE_DISABLED for a switched-off feature).
+  "waiting-list",
+  "payments",
+  "coupons",
+  "promotions",
+  "insurance-providers",
 ]);
 
 /** Only patient/public endpoints are reachable through the browser proxy. */
 export function isProxiedPath(segments: string[]): boolean {
+  // Only `GET /payments/{id}` is a patient call; webhooks and the mock checkout stay server-to-server.
+  if (segments[0] === "payments" && (segments.length !== 2 || segments[1] === "webhook")) {
+    return false;
+  }
   return (
     segments.length > 0 &&
     PROXIED_ROOTS.has(segments[0]) &&

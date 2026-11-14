@@ -97,6 +97,21 @@ describe("buildDoctorJsonLd", () => {
     expect(ld.url).toBe(`${BASE}/ar/doctors/sara-hassan`);
   });
 
+  it("adds aggregateRating only when the doctor has ratings", () => {
+    expect(buildDoctorJsonLd(doctor, "en", BASE)).not.toHaveProperty("aggregateRating");
+    expect(buildDoctorJsonLd({ ...doctor, rating: null }, "en", BASE)).not.toHaveProperty("aggregateRating");
+    expect(buildDoctorJsonLd({ ...doctor, rating: { average: 4.8, count: 0 } }, "en", BASE)).not.toHaveProperty(
+      "aggregateRating",
+    );
+    expect(buildDoctorJsonLd({ ...doctor, rating: { average: 4.8, count: 23 } }, "en", BASE).aggregateRating).toEqual({
+      "@type": "AggregateRating",
+      ratingValue: 4.8,
+      reviewCount: 23,
+      bestRating: 5,
+      worstRating: 1,
+    });
+  });
+
   it("serializes to JSON that cannot close the script tag", () => {
     const text = serializeJsonLd(
       buildDoctorJsonLd({ ...doctor, bio: "</script><script>alert(1)</script>" }, "en", BASE),
