@@ -3,9 +3,10 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { CityField } from "@/components/city-field";
 import { MoonMark } from "@/components/logo";
+import { OfferCard } from "@/components/offer-card";
 import { btnPrimary, btnSecondary, card, container, inputClass, labelClass } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
-import { getCities, getSpecialties } from "@/lib/api/server";
+import { getCities, getPromotions, getSpecialties } from "@/lib/api/server";
 import { clinicConfig, dialablePhone } from "@/lib/clinic-config";
 import { formatPlain } from "@/lib/datetime";
 import { getFeatures } from "@/lib/features";
@@ -36,10 +37,12 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
   const features = await getFeatures();
   const catalog = features.website && features.guestBrowsing;
-  const [specialties, cities] = await Promise.all([
+  const [specialties, cities, offers] = await Promise.all([
     catalog ? orFallback(getSpecialties(locale), []) : Promise.resolve([]),
     catalog && features.multiBranch ? orFallback(getCities(locale), []) : Promise.resolve([]),
+    catalog && features.promotions ? orFallback(getPromotions(locale), []) : Promise.resolve([]),
   ]);
+  const offersT = await getTranslations({ locale, namespace: "Offers" });
   const gate = await getTranslations({ locale, namespace: "Gate" });
   const phone = clinicConfig.supportPhone;
 
@@ -156,7 +159,26 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
       ) : null}
 
-      <section className="bg-surface-muted py-14">
+{features.promotions && offers.length > 0 ? (
+      <section className="bg-surface-muted py-14" aria-labelledby="offers-title">
+        <div className={container}>
+          <div className="mb-6">
+            <h2 id="offers-title" className="text-2xl font-bold">{offersT("title")}</h2>
+            <p className="text-muted">{offersT("subtitle")}</p>
+          </div>
+          <ul className="grid gap-4 md:grid-cols-3">
+            {offers.map((offer) => (
+              <li key={offer.code}>
+                <OfferCard offer={offer} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      ) : null}
+
+      <section className={features.promotions && offers.length > 0 ? "py-14" : "bg-surface-muted py-14"}>
         <div className={container}>
           <h2 className="mb-8 text-2xl font-bold">{t("stepsTitle")}</h2>
           <ol className="grid gap-4 md:grid-cols-3">

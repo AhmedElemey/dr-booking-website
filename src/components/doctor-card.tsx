@@ -4,8 +4,11 @@ import { Link } from "@/i18n/navigation";
 import { cityLabel } from "@/lib/cities";
 import { formatEgp, formatPlain } from "@/lib/datetime";
 import type { DoctorSummary } from "@/lib/api/types";
+import type { Features } from "@/lib/features";
 
+import { RatingBadge } from "./stars";
 import { btnPrimary, btnSecondary, card } from "./ui";
+import { VideoBadge } from "./video-join";
 
 export function DoctorAvatar({
   name,
@@ -47,7 +50,14 @@ export function DoctorAvatar({
   );
 }
 
-export function DoctorCard({ doctor }: { doctor: DoctorSummary }) {
+export function DoctorCard({
+  doctor,
+  features = {},
+}: {
+  doctor: DoctorSummary;
+  /** Ratings, the video badge and accepted insurers show only while their switch is on. */
+  features?: Partial<Features>;
+}) {
   const t = useTranslations("Doctors");
   const locale = useLocale();
 
@@ -65,6 +75,7 @@ export function DoctorCard({ doctor }: { doctor: DoctorSummary }) {
           </Link>
         </h3>
         <p className="text-sm font-medium text-accent">{doctor.specialty.name}</p>
+        {features.reviews && doctor.rating ? <RatingBadge rating={doctor.rating} /> : null}
         <p className="text-sm text-muted">
           {doctor.clinic.name} — {cityLabel(doctor.clinic.city, locale)}
         </p>
@@ -79,6 +90,17 @@ export function DoctorCard({ doctor }: { doctor: DoctorSummary }) {
             <span>{t("fee", { fee: formatEgp(doctor.consultationFeeEgp, locale) })}</span>
           ) : null}
         </p>
+        {(features.videoConsultation && doctor.offersVideo) ||
+        (features.insurance && (doctor.insuranceProviders?.length ?? 0) > 0) ? (
+          <p className="flex flex-wrap items-center gap-2 pt-1">
+            {features.videoConsultation && doctor.offersVideo ? <VideoBadge /> : null}
+            {features.insurance && doctor.insuranceProviders?.length ? (
+              <span className="text-xs text-muted">
+                {t("insuranceAccepted", { providers: doctor.insuranceProviders.map((p) => p.name).join("، ") })}
+              </span>
+            ) : null}
+          </p>
+        ) : null}
       </div>
       <div className="flex gap-2 sm:flex-col">
         <Link href={`/doctors/${doctor.slug}/book`} className={btnPrimary}>

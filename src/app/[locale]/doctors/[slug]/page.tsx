@@ -4,11 +4,14 @@ import { notFound } from "next/navigation";
 
 import { BookingUnavailable } from "@/components/booking-unavailable";
 import { DoctorAvatar } from "@/components/doctor-card";
+import { ReviewsList } from "@/components/reviews-list";
+import { RatingBadge } from "@/components/stars";
+import { VideoBadge } from "@/components/video-join";
 import { btnPrimary, card, container } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { cityLabel } from "@/lib/cities";
 import { ApiError } from "@/lib/api/errors";
-import { getDoctor, getDoctorSlots } from "@/lib/api/server";
+import { getDoctor, getDoctorReviews, getDoctorSlots } from "@/lib/api/server";
 import {
   addDays,
   formatDateKey,
@@ -79,10 +82,23 @@ export default async function DoctorProfilePage({
   const access = await catalogAccess();
   if (access === "unavailable") return <BookingUnavailable />;
   if (access === "login") redirectToLogin(locale);
-  const { multiBranch } = await getFeatures();
+  const features = await getFeatures();
+  const { multiBranch } = features;
 
-  const doctor = await loadDoctor(locale, slug);
+  const doctorData = await loadDoctor(locale, slug);
+  // The API already omits phase-2 fields for a switched-off feature; this keeps the page honest if it does not.
+  const doctor = {
+    ...doctorData,
+    rating: features.reviews ? doctorData.rating : null,
+    offersVideo: features.videoConsultation && Boolean(doctorData.offersVideo),
+    insuranceProviders: features.insurance ? (doctorData.insuranceProviders ?? []) : [],
+  };
   const { clinic } = doctor;
+  const reviews = features.reviews && doctor.rating
+    ? await orFallback(getDoctorReviews(locale, doctor.slug), null)
+    : null;
+  const reviewsT = await getTranslations({ locale, namespace: "Reviews" });
+  const video = await getTranslations({ locale, namespace: "Video" });
 
   const today = todayInZone(clinic.timezone);
   const slots = await orFallback(
@@ -129,6 +145,12 @@ export default async function DoctorProfilePage({
               <p className="text-muted">
                 {multiBranch ? `${clinic.name} — ${cityLabel(clinic.city, locale)}` : clinic.name}
               </p>
+              {doctor.rating || doctor.offersVideo ? (
+                <p className="flex flex-wrap items-center gap-3 pt-1">
+                  <RatingBadge rating={doctor.rating} />
+                  {doctor.offersVideo ? <VideoBadge /> : null}
+                </p>
+              ) : null}
             </div>
           </header>
 
@@ -163,6 +185,34 @@ export default async function DoctorProfilePage({
             )}
             <p className="text-sm text-muted">{t("servicesHint")}</p>
           </section>
+
+          {doctor.insuranceProviders.length > 0 ? (
+            <section className="space-y-3">
+              <h2 className="text-xl font-bold">{t("insurance")}</h2>
+              <ul className="flex flex-wrap gap-2">
+                {doctor.insuranceProviders.map((p) => (
+                  <li key={p.id} className="rounded-full border border-border bg-surface px-4 py-1.5 text-sm font-medium">
+                    {p.name}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
+          {doctor.offersVideo ? (
+            <p className="rounded-xl bg-accent-soft px-4 py-3 text-sm text-accent">{video("profileNote")}</p>
+          ) : null}
+
+          {features.reviews ? (
+            <section className="space-y-3" id="reviews">
+              <h2 className="text-xl font-bold">{reviewsT("title")}</h2>
+              {reviews && reviews.items.length > 0 ? (
+                <ReviewsList doctorSlug={doctor.slug} initial={reviews} />
+              ) : (
+                <p className="text-muted">{reviewsT("empty")}</p>
+              )}
+            </section>
+          ) : null}
 
           <section className="space-y-3">
             <h2 className="text-xl font-bold">{t("clinic")}</h2>

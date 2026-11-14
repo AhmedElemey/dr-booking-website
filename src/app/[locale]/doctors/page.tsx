@@ -7,7 +7,7 @@ import { DoctorCard } from "@/components/doctor-card";
 import { btnPrimary, btnSecondary, card, container, inputClass, labelClass } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { ApiError } from "@/lib/api/errors";
-import { getCities, getSpecialties, searchDoctors } from "@/lib/api/server";
+import { getCities, getInsuranceProviders, getSpecialties, searchDoctors } from "@/lib/api/server";
 import { getFeatures } from "@/lib/features";
 import { catalogAccess, redirectToLogin } from "@/lib/gates";
 import { formatNumber } from "@/lib/datetime";
@@ -16,7 +16,13 @@ import { pageMetadata } from "@/lib/seo";
 
 const PAGE_SIZE = 10;
 
-type Filters = { q?: string; city?: string; specialtyId?: string; page: number };
+type Filters = {
+  q?: string;
+  city?: string;
+  specialtyId?: string;
+  insuranceProviderId?: string;
+  page: number;
+};
 
 function readFilters(raw: { [key: string]: string | string[] | undefined }): Filters {
   const one = (key: string) => {
@@ -29,6 +35,7 @@ function readFilters(raw: { [key: string]: string | string[] | undefined }): Fil
     q: one("q"),
     city: one("city"),
     specialtyId: one("specialtyId"),
+    insuranceProviderId: one("insuranceProviderId"),
     page: Number.isInteger(page) && page > 0 ? page : 1,
   };
 }
@@ -38,6 +45,7 @@ function hrefFor(filters: Filters, page: number) {
   if (filters.q) search.set("q", filters.q);
   if (filters.city) search.set("city", filters.city);
   if (filters.specialtyId) search.set("specialtyId", filters.specialtyId);
+  if (filters.insuranceProviderId) search.set("insuranceProviderId", filters.insuranceProviderId);
   if (page > 1) search.set("page", String(page));
   const query = search.toString();
   return query ? `/doctors?${query}` : "/doctors";
@@ -91,15 +99,20 @@ export default async function DoctorsPage({
   if (access === "unavailable") return <BookingUnavailable />;
   if (access === "login") redirectToLogin(locale);
 
-  const { multiBranch } = await getFeatures();
-  const [specialties, cities, results] = await Promise.all([
+  const features = await getFeatures();
+  const { multiBranch } = features;
+  // Insurance filter and the doctor extras exist only while their feature is on.
+  const insuranceProviderId = features.insurance ? filters.insuranceProviderId : undefined;
+  const [specialties, cities, insurers, results] = await Promise.all([
     orFallback(getSpecialties(locale), []),
     multiBranch ? orFallback(getCities(locale), []) : Promise.resolve([]),
+    features.insurance ? orFallback(getInsuranceProviders(locale), []) : Promise.resolve([]),
     searchDoctors(locale, {
       q: filters.q,
       // Single-branch clinics have no city filter, so ignore a stale ?city= link.
       city: multiBranch ? filters.city : undefined,
       specialtyId: filters.specialtyId,
+      insuranceProviderId,
       page: filters.page,
       pageSize: PAGE_SIZE,
     }).catch((error: unknown) => {
@@ -110,7 +123,9 @@ export default async function DoctorsPage({
   ]);
 
   const totalPages = Math.max(1, Math.ceil(results.totalCount / results.pageSize));
-  const hasFilters = Boolean(filters.q || (multiBranch && filters.city) || filters.specialtyId);
+  const hasFilters = Boolean(
+    filters.q || (multiBranch && filters.city) || filters.specialtyId || insuranceProviderId,
+  );
 
   return (
     <main className={`${container} py-10`}>
@@ -151,6 +166,26 @@ export default async function DoctorsPage({
                 ))}
               </select>
             </div>
+            {features.insurance && insurers.length > 0 ? (
+              <div>
+                <label htmlFor="f-insurance" className={labelClass}>
+                  {t("insuranceLabel")}
+                </label>
+                <select
+                  id="f-insurance"
+                  name="insuranceProviderId"
+                  defaultValue={insuranceProviderId ?? ""}
+                  className={inputClass}
+                >
+                  <option value="">{t("allInsurers")}</option>
+                  {insurers.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ) : null}
             <CityField
               enabled={multiBranch}
               id="f-city"
@@ -187,7 +222,9 @@ export default async function DoctorsPage({
               <p className="text-muted">{t("noResultsHint")}</p>
             </div>
           ) : (
-            results.items.map((doctor) => <DoctorCard key={doctor.id} doctor={doctor} />)
+            results.items.map((doctor) => (
+              <DoctorCard key={doctor.id} doctor={doctor} features={features} />
+            ))
           )}
 
           {totalPages > 1 ? (

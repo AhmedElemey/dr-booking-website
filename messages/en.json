@@ -95,7 +95,10 @@
     "next": "Next",
     "pageOf": "Page {page} of {total}",
     "pagination": "Pagination",
-    "photoAlt": "Photo of {name}"
+    "photoAlt": "Photo of {name}",
+    "insuranceAccepted": "Accepts: {providers}",
+    "insuranceLabel": "Insurance",
+    "allInsurers": "All insurers"
   },
   "Profile": {
     "metaTitle": "{name}, {specialty} in {city}",
@@ -118,7 +121,8 @@
     "noAvailability": "No open times right now. Please check back soon.",
     "bookCta": "Book an appointment",
     "bookCtaHint": "You only sign in at the last step.",
-    "notFound": "We could not find this doctor."
+    "notFound": "We could not find this doctor.",
+    "insurance": "Insurance accepted"
   },
   "Booking": {
     "metaTitle": "Book with {name}",
@@ -161,7 +165,28 @@
     "viewAppointments": "View my appointments",
     "backToDoctors": "Find another dentist",
     "calendarSummary": "Dentist appointment with {name}",
-    "clinicAccount": "This phone number belongs to a clinic account. Please use the {brand} dashboard, or sign in with a patient number."
+    "clinicAccount": "This phone number belongs to a clinic account. Please use the {brand} dashboard, or sign in with a patient number.",
+    "dayClosed": "Closed",
+    "dayFull": "No slots",
+    "closedDay": "The clinic is closed on this day:",
+    "memberNumberRequired": "Please enter your insurance member number.",
+    "couponChecking": "Please wait while we check your coupon code.",
+    "visitType": "Type of visit",
+    "mode": {
+      "InPerson": "In person",
+      "Video": "Video visit"
+    },
+    "modeHint": {
+      "InPerson": "Visit the clinic",
+      "Video": "Join from your phone or computer"
+    },
+    "insurance": "Insurance provider",
+    "noInsurance": "No insurance (pay privately)",
+    "memberNumber": "Member number",
+    "insuranceHint": "The clinic confirms your coverage after booking. You will see the status in your appointments.",
+    "payAtClinicOrOnline": "You can pay at the clinic, or online after booking.",
+    "videoNote": "You will get a Join video button on the day of your visit.",
+    "bookedFor": "Booked for"
   },
   "Login": {
     "phoneLabel": "Mobile number",
@@ -221,7 +246,20 @@
     "rebook": "Book again",
     "clinicAccount": "This is a clinic account. Please use the {brand} dashboard to manage appointments.",
     "pastNote": "This visit has already taken place.",
-    "selfServiceOff": "Cancelling and rescheduling online is not available. To change this visit, please call the clinic on {phone}."
+    "selfServiceOff": "Cancelling and rescheduling online is not available. To change this visit, please call the clinic on {phone}.",
+    "forMember": "For {name} ({relation})",
+    "insuranceBadge": "{provider}: {status}",
+    "insuranceStatus": {
+      "Pending": "pending review",
+      "Approved": "approved",
+      "Rejected": "rejected"
+    },
+    "insurance": "Insurance",
+    "details": "Details",
+    "detailMissing": "We could not find this appointment.",
+    "backToList": "Back to my appointments",
+    "detailTitle": "Appointment details",
+    "detailMetaTitle": "Appointment details"
   },
   "About": {
     "metaTitle": "About {brand}",
@@ -348,7 +386,15 @@
     "INTERNAL_ERROR": "Something went wrong on our side. Please try again shortly.",
     "NETWORK_ERROR": "We could not reach the server. Check your connection and try again.",
     "UNKNOWN": "Something went wrong. Please try again.",
-    "FEATURE_DISABLED": "This service is not available online. Please call the clinic on {phone}."
+    "FEATURE_DISABLED": "This service is not available online. Please call the clinic on {phone}.",
+    "CLINIC_CLOSED": "The clinic is closed on that day. Please pick another date.",
+    "COUPON_INVALID": "This coupon code is not valid.",
+    "ALREADY_REVIEWED": "You have already rated this visit.",
+    "NOT_REVIEWABLE": "This visit cannot be rated yet.",
+    "PAYMENT_NOT_ALLOWED": "This appointment cannot be paid online. You can pay at the clinic.",
+    "VIDEO_NOT_OPEN": "The video room is not open yet. It opens 15 minutes before the visit.",
+    "ALREADY_WAITING": "You are already on the waiting list for this day.",
+    "PROVIDER_ERROR": "The payment or video provider could not be reached. Please try again shortly."
   },
   "ErrorPage": {
     "title": "Something went wrong",
@@ -363,5 +409,187 @@
     "text": "Booking online is not available right now. Please call us on {phone} and we will be happy to help.",
     "call": "Call {phone}",
     "home": "Back to home"
+  },
+  "Coupon": {
+    "label": "Coupon code",
+    "placeholder": "e.g. WELCOME20",
+    "apply": "Apply",
+    "checking": "Checking the code…",
+    "applied": "Code {code} applied: you save {discount}.",
+    "reason": {
+      "NotFound": "We could not find this code. Please check it and try again.",
+      "Expired": "This offer has expired.",
+      "NotStarted": "This offer has not started yet.",
+      "Exhausted": "This offer has reached its limit of uses.",
+      "PerPatientLimit": "You have already used this code the maximum number of times.",
+      "NotApplicable": "This code does not apply to this doctor or service.",
+      "NoPrice": "There is no price to discount for this visit.",
+      "Unknown": "This coupon code is not valid."
+    }
+  },
+  "Family": {
+    "metaTitle": "Family members",
+    "title": "Family members",
+    "intro": "Add your children, spouse or parents to book and manage their visits from your account. You can add up to {max} people.",
+    "bookingFor": "Booking for",
+    "myself": "Myself",
+    "pickerEmpty": "You have not added anyone yet.",
+    "manageLink": "Manage family members",
+    "relationLabel": "Relation",
+    "relation": {
+      "Child": "Child",
+      "Spouse": "Spouse",
+      "Parent": "Parent",
+      "Sibling": "Sibling",
+      "Other": "Other"
+    },
+    "fullName": "Full name",
+    "nameRequired": "Please enter the person's full name.",
+    "dateOfBirth": "Date of birth",
+    "gender": "Gender",
+    "genderUnset": "Not specified",
+    "genderOption": {
+      "Male": "Male",
+      "Female": "Female"
+    },
+    "add": "Add a family member",
+    "edit": "Edit",
+    "delete": "Remove",
+    "deleteConfirm": "Remove {name} from your family members?",
+    "deleteYes": "Yes, remove",
+    "save": "Save",
+    "added": "Family member added.",
+    "saved": "Changes saved.",
+    "removed": "Family member removed.",
+    "empty": "No family members yet",
+    "emptyHint": "Add a family member to book a visit for them.",
+    "limitReached": "You have reached the limit of {max} family members."
+  },
+  "Waiting": {
+    "metaTitle": "My waiting list",
+    "title": "My waiting list",
+    "intro": "When a slot opens with the doctor on a day you are waiting for, we notify you. Open slots go to whoever books first.",
+    "empty": "You are not on any waiting list",
+    "emptyHint": "When a doctor has no open slots on a day, you can join the waiting list for that day.",
+    "findDoctor": "Find a dentist",
+    "status": {
+      "Waiting": "Waiting",
+      "Notified": "A slot opened",
+      "Booked": "Booked",
+      "Cancelled": "Cancelled",
+      "Expired": "Expired"
+    },
+    "notifiedHint": "A slot opened up. Book now before someone else does.",
+    "bookNow": "Book now",
+    "leave": "Leave waiting list",
+    "left": "You left the waiting list.",
+    "fullDayTitle": "No open slots on this day",
+    "fullDayText": "Join the waiting list and we will notify you if a slot opens with this doctor.",
+    "join": "Join the waiting list",
+    "joining": "Joining…",
+    "joined": "You are on the waiting list for {date}.",
+    "joinedHint": "We will notify you as soon as a slot opens.",
+    "viewList": "View my waiting list",
+    "signIn": "Sign in"
+  },
+  "Payment": {
+    "payOnline": "Pay online",
+    "redirecting": "Opening checkout…",
+    "price": "Price",
+    "discount": "Discount",
+    "total": "Total",
+    "statusLabel": "Payment",
+    "status": {
+      "Unpaid": "Pay at the clinic",
+      "Pending": "Payment pending",
+      "Paid": "Paid",
+      "Refunded": "Refunded"
+    },
+    "checking": "Checking your payment…",
+    "unknown": "Welcome back. Your appointment is shown below with its latest payment status.",
+    "paidTitle": "Payment received.",
+    "paidText": "Thank you. Your visit is paid for.",
+    "failedTitle": "The payment did not go through.",
+    "failedText": "You have not been charged. You can try again or pay at the clinic.",
+    "refundedText": "This payment was refunded.",
+    "stillPending": "Your payment is still being confirmed. This can take a minute.",
+    "recheck": "Check again"
+  },
+  "Video": {
+    "badge": "Video visit",
+    "join": "Join video",
+    "opensAt": "Opens at {time}, 15 minutes before the visit.",
+    "profileNote": "This doctor also sees patients by video: choose “Video visit” when you book."
+  },
+  "Reviews": {
+    "title": "Patient reviews",
+    "empty": "No reviews yet.",
+    "ratingLabel": "Rated {average} out of 5 by {n} patients",
+    "rateLegend": "Your rating",
+    "starsOption": "{count, plural, one {1 star} other {# stars}}",
+    "ratingRequired": "Please choose a rating from 1 to 5 stars.",
+    "thanks": "Thank you for rating your visit.",
+    "rateVisit": "Rate your visit",
+    "rateTitle": "How was your visit?",
+    "commentLabel": "Comment (optional)",
+    "commentPlaceholder": "Tell other patients about your experience",
+    "submit": "Submit rating",
+    "submitting": "Sending…",
+    "later": "Not now",
+    "yourRating": "Your rating",
+    "clinicReply": "Reply from the clinic",
+    "loadingMore": "Loading…",
+    "showMore": "Show more reviews ({n})"
+  },
+  "Offers": {
+    "title": "Current offers",
+    "subtitle": "Enter the code when you confirm your booking.",
+    "percentOff": "{value}% off",
+    "fixedOff": "{value} off",
+    "validUntil": "Valid until {date}",
+    "copy": "Copy code",
+    "copied": "Copied",
+    "bookNow": "Book now"
+  },
+  "AccountNav": {
+    "label": "Account",
+    "appointments": "My appointments",
+    "family": "Family",
+    "waitingList": "Waiting list",
+    "records": "My records",
+    "settings": "Settings"
+  },
+  "Records": {
+    "metaTitle": "My records",
+    "title": "My records",
+    "intro": "Your medical information and the notes, diagnoses and prescriptions your clinic has shared with you.",
+    "medicalInfo": "Medical information",
+    "bloodType": "Blood type",
+    "allergies": "Allergies",
+    "chronicConditions": "Chronic conditions",
+    "medications": "Current medications",
+    "notRecorded": "Not recorded",
+    "updated": "Last updated {date}",
+    "noMedicalInfo": "No medical information has been recorded yet.",
+    "entries": "From your visits",
+    "noEntries": "Nothing has been shared with you yet.",
+    "kind": {
+      "Note": "Note",
+      "Diagnosis": "Diagnosis",
+      "Prescription": "Prescription",
+      "Attachment": "Attachment"
+    },
+    "openAttachment": "Open attachment"
+  },
+  "Settings": {
+    "metaTitle": "Account settings",
+    "title": "Account settings",
+    "signedInAs": "{name} · {phone}",
+    "messagesTitle": "Messages",
+    "whatsapp": "WhatsApp reminders",
+    "whatsappHint": "Receive booking confirmations and visit reminders on WhatsApp as well.",
+    "offers": "Offers and reminders to come back",
+    "offersHint": "Receive offers and a friendly reminder when it is time for your next check-up.",
+    "saved": "Your preferences were saved."
   }
 }

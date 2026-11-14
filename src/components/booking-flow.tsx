@@ -6,7 +6,9 @@ import { useState, type FormEvent } from "react";
 import { Link } from "@/i18n/navigation";
 import { brandName, clinicConfig } from "@/lib/clinic-config";
 import { ApiError } from "@/lib/api/errors";
-import type { Appointment, DoctorProfile, User } from "@/lib/api/types";
+import type { BookingInput } from "@/lib/api/client";
+import type { Appointment, AppointmentMode, DoctorProfile, User } from "@/lib/api/types";
+import type { Features } from "@/lib/features";
 import {
   formatAppointmentDate,
   formatAppointmentTime,
@@ -18,8 +20,13 @@ import {
 import { buildIcs } from "@/lib/ics";
 import { formatEgyptPhone, isolateLtr } from "@/lib/phone";
 
+import { CouponField, type CouponState } from "./coupon-field";
+import { FamilyPicker } from "./family-picker";
 import { LoginPanel } from "./login-panel";
+import { canPayOnline, PayButton } from "./pay-button";
+import { PaymentSummary } from "./payment-summary";
 import { SlotPicker, type PickedSlot } from "./slot-picker";
+import { VideoBadge } from "./video-join";
 import {
   alertError,
   btnGhost,
@@ -40,7 +47,14 @@ const STEP_LABEL_KEY = {
   done: "stepDone",
 } as const;
 
-export function BookingFlow({ doctor }: { doctor: DoctorProfile }) {
+export function BookingFlow({
+  doctor,
+  features = {},
+}: {
+  doctor: DoctorProfile;
+  /** Phase-2 feature switches; each extra step of the flow is hidden unless its switch is on. */
+  features?: Partial<Features>;
+}) {
   const t = useTranslations("Booking");
   const locale = useLocale();
   const api = useApiClient();
@@ -56,6 +70,14 @@ export function BookingFlow({ doctor }: { doctor: DoctorProfile }) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [memberId, setMemberId] = useState("");
+  const [mode, setMode] = useState<AppointmentMode>("InPerson");
+  const [insuranceId, setInsuranceId] = useState("");
+  const [memberNumber, setMemberNumber] = useState("");
+  const [coupon, setCoupon] = useState<CouponState>({ status: "empty" });
+
+  const offersVideo = Boolean(features.videoConsultation && doctor.offersVideo);
+  const insuranceOptions = features.insurance ? (doctor.insuranceProviders ?? []) : [];
 
   function enterConfirm(next: User) {
     if (next.role !== "Patient") {
@@ -95,17 +117,33 @@ export function BookingFlow({ doctor }: { doctor: DoctorProfile }) {
       setError(t("fullNameRequired"));
       return;
     }
+    if (insuranceId && !memberNumber.trim()) {
+      setError(t("memberNumberRequired"));
+      return;
+    }
+    if (coupon.status === "checking" || coupon.status === "invalid") {
+      setError(coupon.status === "invalid" ? coupon.message : t("couponChecking"));
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
       if (name !== (user.fullName ?? "")) {
         setUser(await api.updateMe({ fullName: name }));
       }
-      const booked = await api.bookAppointment({
+      // Feature-only fields are sent only while their feature is on.
+      const input: BookingInput = {
         slotId: picked.slot.id,
         serviceId: serviceId || undefined,
         patientNote: note.trim() || undefined,
-      });
+        ...(features.familyAccounts && memberId ? { familyMemberId: memberId } : {}),
+        ...(offersVideo ? { mode } : {}),
+        ...(insuranceOptions.length > 0 && insuranceId
+          ? { insurance: { providerId: insuranceId, memberNumber: memberNumber.trim() } }
+          : {}),
+        ...(features.promotions && coupon.status === "valid" ? { couponCode: coupon.code } : {}),
+      };
+      const booked = await api.bookAppointment(input);
       setAppointment(booked);
       setStep("done");
     } catch (err) {
@@ -114,7 +152,7 @@ export function BookingFlow({ doctor }: { doctor: DoctorProfile }) {
         setStep("login");
       } else if (
         err instanceof ApiError &&
-        (err.code === "SLOT_TAKEN" || err.code === "SLOT_UNAVAILABLE")
+        (err.code === "SLOT_TAKEN" || err.code === "SLOT_UNAVAILABLE" || err.code === "CLINIC_CLOSED")
       ) {
         // Someone else got there first: pick again from fresh availability.
         setPicked(null);
@@ -146,6 +184,10 @@ export function BookingFlow({ doctor }: { doctor: DoctorProfile }) {
 
   const currentIndex = STEPS.indexOf(step);
   const service = doctor.services.find((s) => s.id === serviceId);
+  const basePrice = service?.priceEgp ?? doctor.consultationFeeEgp ?? null;
+  const discount = coupon.status === "valid" ? coupon.check.discountEgp : 0;
+  const total = basePrice == null ? null : Math.max(0, basePrice - discount);
+  const showPrice = basePrice != null && Boolean(features.onlinePayments || features.promotions);
 
   return (
     <div className="space-y-8">
@@ -187,6 +229,8 @@ export function BookingFlow({ doctor }: { doctor: DoctorProfile }) {
               setError(null);
             }}
             refreshKey={refreshKey}
+            features={features}
+            serviceId={serviceId || undefined}
           />
           {picked ? (
             <div className={`${card} flex flex-wrap items-center justify-between gap-4`}>
@@ -248,6 +292,10 @@ export function BookingFlow({ doctor }: { doctor: DoctorProfile }) {
               </p>
             </div>
 
+            {features.familyAccounts ? (
+              <FamilyPicker value={memberId} onChange={setMemberId} />
+            ) : null}
+
             {doctor.services.length > 0 ? (
               <div>
                 <label htmlFor="b-service" className={labelClass}>
@@ -267,6 +315,79 @@ export function BookingFlow({ doctor }: { doctor: DoctorProfile }) {
                   ))}
                 </select>
               </div>
+            ) : null}
+
+            {offersVideo ? (
+              <fieldset>
+                <legend className={labelClass}>{t("visitType")}</legend>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {(["InPerson", "Video"] as const).map((option) => (
+                    <label
+                      key={option}
+                      className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3 text-sm ${
+                        mode === option ? "border-primary bg-accent-soft" : "border-border bg-surface"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="b-mode"
+                        value={option}
+                        checked={mode === option}
+                        onChange={() => setMode(option)}
+                        className="mt-1"
+                      />
+                      <span>
+                        <span className="block font-semibold">{t(`mode.${option}`)}</span>
+                        <span className="text-muted">{t(`modeHint.${option}`)}</span>
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            ) : null}
+
+            {insuranceOptions.length > 0 ? (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="b-insurance" className={labelClass}>
+                    {t("insurance")}
+                  </label>
+                  <select
+                    id="b-insurance"
+                    value={insuranceId}
+                    onChange={(e) => setInsuranceId(e.target.value)}
+                    className={inputClass}
+                  >
+                    <option value="">{t("noInsurance")}</option>
+                    {insuranceOptions.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {insuranceId ? (
+                  <div>
+                    <label htmlFor="b-member-number" className={labelClass}>
+                      {t("memberNumber")}
+                    </label>
+                    <input
+                      id="b-member-number"
+                      value={memberNumber}
+                      onChange={(e) => setMemberNumber(e.target.value)}
+                      dir="ltr"
+                      maxLength={40}
+                      autoComplete="off"
+                      className={inputClass}
+                    />
+                  </div>
+                ) : null}
+                <p className="text-xs text-muted sm:col-span-2">{t("insuranceHint")}</p>
+              </div>
+            ) : null}
+
+            {features.promotions ? (
+              <CouponField doctorId={doctor.id} serviceId={serviceId || undefined} onChange={setCoupon} />
             ) : null}
 
             <div>
@@ -303,15 +424,29 @@ export function BookingFlow({ doctor }: { doctor: DoctorProfile }) {
                   {formatDateKey(picked.date, locale)} — {formatHHmm(picked.slot.local, locale)}
                 </dd>
               </div>
-              {service?.priceEgp != null ? (
+              {offersVideo && mode === "Video" ? (
+                <div>
+                  <dt className="text-muted">{t("visitType")}</dt>
+                  <dd>
+                    <VideoBadge />
+                  </dd>
+                </div>
+              ) : null}
+              {service?.priceEgp != null && !showPrice ? (
                 <div>
                   <dt className="text-muted">{service.name}</dt>
                   <dd>{formatEgp(service.priceEgp, locale)}</dd>
                 </div>
               ) : null}
             </dl>
+            {showPrice && basePrice != null && total != null ? (
+              <PaymentSummary
+                appointment={{ priceEgp: basePrice, discountEgp: discount, totalEgp: total }}
+                showStatus={false}
+              />
+            ) : null}
             <p className="rounded-xl bg-accent-soft px-3 py-2 text-sm text-accent">
-              {t("payAtClinic")}
+              {features.onlinePayments ? t("payAtClinicOrOnline") : t("payAtClinic")}
             </p>
             <button type="submit" disabled={busy} className={`${btnPrimary} w-full`}>
               {busy ? t("confirming") : t("confirm")}
@@ -347,6 +482,12 @@ export function BookingFlow({ doctor }: { doctor: DoctorProfile }) {
               <dt className="text-muted">{t("doctor")}</dt>
               <dd className="font-semibold">{appointment.doctor.name}</dd>
             </div>
+            {features.familyAccounts && appointment.familyMember ? (
+              <div>
+                <dt className="text-muted">{t("bookedFor")}</dt>
+                <dd className="font-semibold">{appointment.familyMember.fullName}</dd>
+              </div>
+            ) : null}
             <div>
               <dt className="text-muted">{t("dateTime")}</dt>
               <dd className="font-semibold">
@@ -360,8 +501,23 @@ export function BookingFlow({ doctor }: { doctor: DoctorProfile }) {
               <dd className="text-muted">{appointment.clinic.address}</dd>
             </div>
           </dl>
-          <p className="text-sm text-muted">{t("payAtClinic")}</p>
+          {appointment.mode === "Video" && features.videoConsultation ? (
+            <p className="flex items-center gap-2 text-sm">
+              <VideoBadge /> <span className="text-muted">{t("videoNote")}</span>
+            </p>
+          ) : null}
+          {features.onlinePayments || (features.promotions && (appointment.discountEgp ?? 0) > 0) ? (
+            <PaymentSummary appointment={appointment} showStatus={Boolean(features.onlinePayments)} />
+          ) : null}
+          <p className="text-sm text-muted">
+            {features.onlinePayments && canPayOnline(appointment)
+              ? t("payAtClinicOrOnline")
+              : t("payAtClinic")}
+          </p>
           <div className="flex flex-wrap gap-3">
+            {features.onlinePayments && canPayOnline(appointment) ? (
+              <PayButton appointmentId={appointment.id} />
+            ) : null}
             <button type="button" onClick={downloadIcs} className={btnSecondary}>
               {t("addToCalendar")}
             </button>
