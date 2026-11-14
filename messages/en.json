@@ -1,8 +1,358 @@
 {
+  "Meta": {
+    "siteName": "Moonlight",
+    "description": "Find a trusted dentist near you and book a real, open appointment online in under a minute. Pay at the clinic."
+  },
+  "Common": {
+    "brand": "Moonlight",
+    "loading": "Loading…",
+    "retry": "Try again",
+    "back": "Back",
+    "continue": "Continue",
+    "cancel": "Cancel",
+    "close": "Close",
+    "minutes": "{count} min",
+    "timezoneNote": "Times are shown in {timezone} (clinic time)",
+    "cairoTime": "Cairo time"
+  },
+  "Nav": {
+    "doctors": "Find a dentist",
+    "about": "About",
+    "contact": "Contact",
+    "myAppointments": "My appointments",
+    "switchLanguage": "العربية",
+    "home": "Moonlight home",
+    "mainNavigation": "Main navigation"
+  },
+  "Footer": {
+    "tagline": "Find a dentist and book in minutes. Pay at the clinic.",
+    "explore": "Explore",
+    "company": "Company",
+    "legal": "Legal",
+    "terms": "Terms of use",
+    "privacy": "Privacy policy",
+    "apps": "Get the app",
+    "appStore": "App Store",
+    "googlePlay": "Google Play",
+    "forClinics": "Doctor or clinic staff? Manage your schedule in the Moonlight dashboard.",
+    "rights": "© {year} Moonlight. All rights reserved."
+  },
   "Home": {
-    "metaTitle": "Moonlight: book your dentist",
-    "title": "Find a dentist and book in minutes",
-    "subtitle": "The Moonlight website is under construction.",
-    "switchLanguage": "العربية"
+    "metaTitle": "Moonlight: book your dentist online in Egypt",
+    "metaDescription": "Search dentists by specialty and city, see real open slots and book instantly. Moonlight makes dental care easy to reach in Cairo and across Egypt.",
+    "heroEyebrow": "Dental appointments, simplified",
+    "heroTitle": "Find a dentist and book in minutes",
+    "heroSubtitle": "Browse trusted dentists, see their real open times and confirm your visit instantly. No calls, no waiting, pay at the clinic.",
+    "searchLabel": "Doctor name",
+    "searchPlaceholder": "Search by doctor name",
+    "cityLabel": "City",
+    "allCities": "All cities",
+    "searchButton": "Search dentists",
+    "specialtiesTitle": "Browse by specialty",
+    "specialtiesSubtitle": "From a routine check-up to braces and root canals.",
+    "allDoctors": "See all dentists",
+    "stepsTitle": "How it works",
+    "step1Title": "Choose a dentist",
+    "step1Text": "Filter by specialty and city and read each doctor’s profile.",
+    "step2Title": "Pick an open time",
+    "step2Text": "Every slot you see is free. Choose the one that fits your day.",
+    "step3Title": "Confirm with your phone",
+    "step3Text": "Verify your mobile number with a one-time code and your booking is confirmed instantly.",
+    "benefitsTitle": "Why patients choose Moonlight",
+    "benefit1Title": "Instant confirmation",
+    "benefit1Text": "No waiting for the clinic to call back. Your booking is confirmed on the spot.",
+    "benefit2Title": "Pay at the clinic",
+    "benefit2Text": "Nothing to pay online. Prices shown are for information only.",
+    "benefit3Title": "Free changes",
+    "benefit3Text": "Cancel or reschedule from your account up to two hours before your visit.",
+    "appTitle": "Take Moonlight with you",
+    "appText": "Book, get reminders 24 hours before your visit and manage appointments from the Moonlight app.",
+    "ctaTitle": "Ready for a healthier smile?",
+    "ctaButton": "Find a dentist"
+  },
+  "Doctors": {
+    "metaTitle": "Find a dentist in Egypt",
+    "metaTitleSpecialty": "{specialty} dentists in Egypt",
+    "metaDescription": "Browse dentists by specialty and city, compare fees and experience, and book an open appointment online.",
+    "title": "Find a dentist",
+    "filtersTitle": "Filters",
+    "searchLabel": "Doctor name",
+    "searchPlaceholder": "Search by name",
+    "specialtyLabel": "Specialty",
+    "allSpecialties": "All specialties",
+    "cityLabel": "City",
+    "allCities": "All cities",
+    "apply": "Apply filters",
+    "reset": "Clear filters",
+    "resultsCount": "{count, plural, =0 {No dentists found} one {1 dentist found} other {{n} dentists found}}",
+    "noResults": "No dentists match your search",
+    "noResultsHint": "Try another specialty or city, or clear the filters.",
+    "yearsExperience": "{count, plural, one {1 year of experience} other {{n} years of experience}}",
+    "fee": "Consultation {fee}",
+    "viewProfile": "View profile",
+    "bookNow": "Book now",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {page} of {total}",
+    "pagination": "Pagination",
+    "photoAlt": "Photo of {name}"
+  },
+  "Profile": {
+    "metaTitle": "{name}, {specialty} in {city}",
+    "metaDescription": "Book an appointment with {name}, {specialty} at {clinic}, {city}. See open times and confirm online in minutes.",
+    "breadcrumbDoctors": "Dentists",
+    "about": "About the doctor",
+    "noBio": "This doctor has not added a biography yet.",
+    "experience": "Experience",
+    "fee": "Consultation fee",
+    "feeNote": "Pay at the clinic. Prices are for information only.",
+    "clinic": "Clinic",
+    "address": "Address",
+    "phone": "Phone",
+    "directions": "Get directions",
+    "services": "Treatments",
+    "servicesHint": "Duration and price are informational.",
+    "noServices": "The clinic has not listed treatments yet.",
+    "availability": "Availability",
+    "nextAvailable": "Next available",
+    "noAvailability": "No open times right now. Please check back soon.",
+    "bookCta": "Book an appointment",
+    "bookCtaHint": "You only sign in at the last step.",
+    "notFound": "We could not find this doctor."
+  },
+  "Booking": {
+    "metaTitle": "Book with {name}",
+    "title": "Book with {name}",
+    "stepSlot": "Choose a time",
+    "stepLogin": "Verify phone",
+    "stepConfirm": "Confirm",
+    "stepDone": "Done",
+    "progress": "Booking steps",
+    "pickDay": "Pick a day",
+    "pickTime": "Pick a time",
+    "noSlotsAtAll": "This doctor has no open times in the next two weeks.",
+    "noSlotsDay": "No open times on this day.",
+    "daySlots": "{count, plural, one {1 slot} other {{n} slots}}",
+    "loadingSlots": "Loading open times…",
+    "slotsError": "We could not load the open times.",
+    "selected": "Selected time",
+    "continue": "Continue",
+    "loginTitle": "Verify your phone number",
+    "loginText": "We use your mobile number to confirm your booking and send reminders. It takes a few seconds.",
+    "summary": "Booking summary",
+    "doctor": "Doctor",
+    "clinic": "Clinic",
+    "dateTime": "Date and time",
+    "service": "Visit type (optional)",
+    "noService": "General visit / not sure",
+    "note": "Note for the clinic (optional)",
+    "notePlaceholder": "Anything the dentist should know before your visit",
+    "fullName": "Your full name",
+    "fullNameHint": "So the clinic can recognise you at the door.",
+    "fullNameRequired": "Please enter your full name.",
+    "payAtClinic": "Pay at the clinic. Nothing is charged online.",
+    "signedInAs": "Signed in as {phone}",
+    "changeSlot": "Change time",
+    "confirm": "Confirm booking",
+    "confirming": "Confirming…",
+    "successTitle": "Your appointment is confirmed",
+    "successText": "Save the details below. You can cancel or reschedule from your account.",
+    "addToCalendar": "Add to calendar",
+    "viewAppointments": "View my appointments",
+    "backToDoctors": "Find another dentist",
+    "calendarSummary": "Dentist appointment with {name}",
+    "clinicAccount": "This phone number belongs to a clinic account. Please use the Moonlight dashboard, or sign in with a patient number."
+  },
+  "Login": {
+    "phoneLabel": "Mobile number",
+    "phonePlaceholder": "01X XXXX XXXX",
+    "phoneHint": "An Egyptian mobile number, for example 010 1234 5678.",
+    "phoneInvalid": "Enter a valid Egyptian mobile number.",
+    "sendCode": "Send code",
+    "sending": "Sending…",
+    "codeLabel": "Verification code",
+    "codeSentTo": "We sent a 6-digit code to {phone}.",
+    "codeInvalid": "Enter the 6-digit code.",
+    "verify": "Verify and continue",
+    "verifying": "Verifying…",
+    "resendIn": "Resend the code in {seconds}s",
+    "resend": "Resend code",
+    "changeNumber": "Use a different number"
+  },
+  "Account": {
+    "metaTitle": "My appointments",
+    "title": "My appointments",
+    "hello": "Hello, {name}",
+    "signOut": "Sign out",
+    "tabUpcoming": "Upcoming",
+    "tabPast": "Past",
+    "noUpcoming": "You have no upcoming appointments",
+    "noUpcomingHint": "Find a dentist and book your next visit in a minute.",
+    "noPast": "No past appointments yet",
+    "findDentist": "Find a dentist",
+    "loginTitle": "Sign in to see your appointments",
+    "loginText": "Enter your mobile number and we will send you a one-time code.",
+    "loadError": "We could not load your appointments.",
+    "status": {
+      "Confirmed": "Confirmed",
+      "Cancelled": "Cancelled",
+      "Completed": "Completed",
+      "NoShow": "Missed"
+    },
+    "windowHint": "You can cancel or reschedule up to 2 hours before your visit.",
+    "call": "Call clinic",
+    "directions": "Directions",
+    "cancel": "Cancel appointment",
+    "cancelTitle": "Cancel this appointment?",
+    "cancelText": "The time will be released for other patients.",
+    "cancelReason": "Reason (optional)",
+    "cancelConfirm": "Yes, cancel it",
+    "keep": "Keep it",
+    "cancelled": "Your appointment was cancelled.",
+    "reschedule": "Reschedule",
+    "rescheduleTitle": "Pick a new time with {name}",
+    "rescheduleConfirm": "Move appointment here",
+    "rescheduled": "Your appointment was moved.",
+    "service": "Visit type",
+    "note": "Your note",
+    "reason": "Reason",
+    "cancelledByClinic": "Cancelled by the clinic",
+    "cancelledByYou": "Cancelled by you",
+    "rebook": "Book again",
+    "clinicAccount": "This is a clinic account. Please use the Moonlight dashboard to manage appointments.",
+    "pastNote": "This visit has already taken place."
+  },
+  "About": {
+    "metaTitle": "About Moonlight",
+    "metaDescription": "Moonlight connects patients in Egypt with trusted dentists and real, bookable appointments.",
+    "title": "About Moonlight",
+    "intro": "Moonlight is a dental booking platform built for Egypt. We believe that booking a dentist should take a minute, not a week of phone calls.",
+    "sections": [
+      {
+        "title": "Real availability",
+        "body": "Clinics publish the exact times they are free. When you see a time on Moonlight, it is open, and the moment you book it, it is yours."
+      },
+      {
+        "title": "Simple for patients",
+        "body": "Search by specialty and city, read the doctor’s profile, and confirm with your mobile number. There are no accounts to create and nothing to pay online."
+      },
+      {
+        "title": "Built with clinics",
+        "body": "Doctors and clinic staff manage their profile, treatments and schedule from the Moonlight dashboard, and see bookings the moment they are made."
+      },
+      {
+        "title": "Arabic first",
+        "body": "Moonlight is available in Arabic and English, with times shown in the clinic’s own timezone."
+      }
+    ]
+  },
+  "Contact": {
+    "metaTitle": "Contact us",
+    "metaDescription": "Questions about a booking or Moonlight for your clinic? Get in touch with the Moonlight team.",
+    "title": "Contact us",
+    "intro": "Questions about a booking, feedback, or interested in Moonlight for your clinic? We would love to hear from you.",
+    "email": "Email",
+    "phone": "Phone",
+    "hours": "Support hours",
+    "hoursValue": "Saturday to Thursday, 10:00 to 18:00 (Cairo time)",
+    "address": "Office",
+    "addressValue": "Cairo, Egypt",
+    "clinicsTitle": "For clinics and doctors",
+    "clinicsText": "Moonlight clinic accounts are created by our team. Write to us and we will get your clinic set up, then manage everything from the dashboard.",
+    "patientsTitle": "Need to change a booking?",
+    "patientsText": "You can cancel or reschedule on your own from your account, up to two hours before the visit."
+  },
+  "Terms": {
+    "metaTitle": "Terms of use",
+    "metaDescription": "The terms that apply when you use Moonlight to find a dentist and book appointments.",
+    "title": "Terms of use",
+    "updated": "Last updated: October 2026",
+    "intro": "These terms explain how you may use the Moonlight website and booking service. By using it, you agree to them.",
+    "sections": [
+      {
+        "title": "The service",
+        "body": "Moonlight lets you find dentists, view the appointment times they publish and book them. Moonlight is a booking platform. Treatment is provided by the clinics and doctors, who are responsible for it."
+      },
+      {
+        "title": "Your account",
+        "body": "You sign in with a mobile number and a one-time code. You are responsible for the number you use and for the accuracy of the details you give. Please book only for yourself."
+      },
+      {
+        "title": "Bookings and cancellations",
+        "body": "A booking is confirmed immediately when you complete it. You can cancel or reschedule free of charge from your account up to two hours before the appointment. Clinics may cancel an appointment and will let you know. Please cancel if you cannot attend so that the time can go to another patient."
+      },
+      {
+        "title": "Fees",
+        "body": "Payment is made at the clinic. Fees and prices shown on Moonlight are informational and may differ from the clinic’s final charges."
+      },
+      {
+        "title": "Acceptable use",
+        "body": "Do not misuse the service, for example by holding times you do not intend to use, using automated tools to book, or giving false information. We may limit the number of upcoming bookings per account and suspend accounts that abuse the service."
+      },
+      {
+        "title": "Changes and contact",
+        "body": "We may update these terms from time to time and will publish the new version on this page. Questions about the terms can be sent to us from the contact page."
+      }
+    ]
+  },
+  "Privacy": {
+    "metaTitle": "Privacy policy",
+    "metaDescription": "How Moonlight collects, uses and protects your personal data.",
+    "title": "Privacy policy",
+    "updated": "Last updated: October 2026",
+    "intro": "Your privacy matters to us. This policy explains what we collect when you use the Moonlight website and why.",
+    "sections": [
+      {
+        "title": "What we collect",
+        "body": "Your mobile number, your name, the appointments you book (doctor, clinic, time, optional visit type and note) and your language preference. We also keep basic technical logs needed to run and secure the service."
+      },
+      {
+        "title": "How we use it",
+        "body": "To verify your identity with a one-time code, to book and manage your appointments, to share the booking details with the clinic you chose, and to send confirmations and reminders."
+      },
+      {
+        "title": "Who sees it",
+        "body": "The clinic and doctor you book with see your name, phone number and appointment details. We do not sell your data and we do not share it with advertisers."
+      },
+      {
+        "title": "Cookies",
+        "body": "We use only essential cookies that keep you signed in. They are marked httpOnly, so scripts on the page cannot read them, and they are removed when you sign out."
+      },
+      {
+        "title": "Retention and your rights",
+        "body": "We keep your data while your account is active and as long as needed to run the service. Under Egypt’s Personal Data Protection Law you may ask to access, correct or delete your data by contacting us."
+      },
+      {
+        "title": "Contact",
+        "body": "For any privacy question or request, write to us from the contact page."
+      }
+    ]
+  },
+  "Errors": {
+    "VALIDATION_FAILED": "Some of the information is not valid. Please check and try again.",
+    "OTP_INVALID": "That code is not correct. Please check it and try again.",
+    "OTP_EXPIRED": "That code has expired. Request a new one.",
+    "UNAUTHORIZED": "Please sign in to continue.",
+    "FORBIDDEN": "This account cannot do that. Clinic accounts should use the dashboard.",
+    "NOT_FOUND": "We could not find what you were looking for.",
+    "SLOT_TAKEN": "Someone just booked this time. Please pick another one.",
+    "SLOT_UNAVAILABLE": "This time is no longer available. Please pick another one.",
+    "SLOT_RESERVED": "This time is already reserved.",
+    "SLOT_OVERLAP": "This time overlaps another one.",
+    "INVALID_TRANSITION": "This appointment can no longer be changed.",
+    "CANCEL_WINDOW_PASSED": "It is too late to change this appointment online. Please call the clinic.",
+    "PHONE_IN_USE": "This phone number belongs to another type of account.",
+    "BOOKING_LIMIT": "You have reached the limit of upcoming bookings, or already have a visit with this doctor that day.",
+    "RATE_LIMITED": "Too many attempts. Please wait a moment and try again.",
+    "INTERNAL_ERROR": "Something went wrong on our side. Please try again shortly.",
+    "NETWORK_ERROR": "We could not reach the server. Check your connection and try again.",
+    "UNKNOWN": "Something went wrong. Please try again."
+  },
+  "ErrorPage": {
+    "title": "Something went wrong",
+    "text": "We could not load this page. Please try again in a moment.",
+    "notFoundTitle": "Page not found",
+    "notFoundText": "The page you are looking for does not exist or has moved.",
+    "goHome": "Back to home"
   }
 }

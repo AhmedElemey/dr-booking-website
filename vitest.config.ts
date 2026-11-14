@@ -9,5 +9,7 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
+    // next-intl imports extensionless `next/*` ESM paths; let Vite resolve them.
+    server: { deps: { inline: ["next-intl"] } },
   },
 });
