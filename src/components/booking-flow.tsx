@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 
 import { Link } from "@/i18n/navigation";
+import { brandName, clinicConfig } from "@/lib/clinic-config";
 import { ApiError } from "@/lib/api/errors";
 import type { Appointment, DoctorProfile, User } from "@/lib/api/types";
 import {
@@ -129,13 +130,16 @@ export function BookingFlow({ doctor }: { doctor: DoctorProfile }) {
   function downloadIcs() {
     if (!appointment) return;
     const blob = new Blob(
-      [buildIcs(appointment, t("calendarSummary", { name: doctor.name }))],
+      [buildIcs(appointment, t("calendarSummary", { name: doctor.name }), {
+          name: brandName(locale),
+          slug: clinicConfig.slug,
+        })],
       { type: "text/calendar;charset=utf-8" },
     );
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "moonlight-appointment.ics";
+    link.download = `${clinicConfig.slug}-appointment.ics`;
     link.click();
     URL.revokeObjectURL(url);
   }

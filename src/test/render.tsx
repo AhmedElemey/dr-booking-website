@@ -3,6 +3,8 @@ import { NextIntlClientProvider } from "next-intl";
 import type { ReactElement } from "react";
 import { afterEach, vi } from "vitest";
 
+import { applyBrand } from "@/lib/clinic-config";
+
 import ar from "../../messages/ar.json";
 import en from "../../messages/en.json";
 
@@ -11,7 +13,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-const MESSAGES = { ar, en };
+const MESSAGES = { ar: applyBrand(ar, "ar"), en: applyBrand(en, "en") };
 
 export function renderWithIntl(ui: ReactElement, locale: "ar" | "en" = "en") {
   return render(

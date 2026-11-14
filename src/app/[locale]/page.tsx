@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { CityField } from "@/components/city-field";
 import { MoonMark } from "@/components/logo";
 import { btnPrimary, btnSecondary, card, container, inputClass, labelClass } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
-import { cityLabel } from "@/lib/cities";
 import { getCities, getSpecialties } from "@/lib/api/server";
+import { clinicConfig, dialablePhone } from "@/lib/clinic-config";
 import { formatPlain } from "@/lib/datetime";
+import { getFeatures } from "@/lib/features";
 import { orFallback } from "@/lib/safe";
-import { pageMetadata } from "@/lib/seo";
+import { buildOrganizationJsonLd, pageMetadata, serializeJsonLd } from "@/lib/seo";
 
-// Specialties/cities come from the API; refresh the static page every 5 minutes.
-export const revalidate = 300;
+// Specialties/cities and feature switches come from the API; refresh the static page every minute.
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,
@@ -32,16 +34,24 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const t = await getTranslations({ locale, namespace: "Home" });
   const footer = await getTranslations({ locale, namespace: "Footer" });
 
+  const features = await getFeatures();
+  const catalog = features.website && features.guestBrowsing;
   const [specialties, cities] = await Promise.all([
-    orFallback(getSpecialties(locale), []),
-    orFallback(getCities(locale), []),
+    catalog ? orFallback(getSpecialties(locale), []) : Promise.resolve([]),
+    catalog && features.multiBranch ? orFallback(getCities(locale), []) : Promise.resolve([]),
   ]);
+  const gate = await getTranslations({ locale, namespace: "Gate" });
+  const phone = clinicConfig.supportPhone;
 
   const steps = [1, 2, 3] as const;
   const benefits = [1, 2, 3] as const;
 
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(buildOrganizationJsonLd(locale)) }}
+      />
       <section className="relative overflow-hidden bg-night text-night-foreground">
         <div
           aria-hidden="true"
@@ -62,10 +72,11 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             </h1>
             <p className="max-w-xl text-lg opacity-80">{t("heroSubtitle")}</p>
 
+            {features.website ? (
             <form
               action={`/${locale}/doctors`}
               method="get"
-              className="grid gap-3 rounded-2xl bg-surface p-4 text-foreground shadow-xl sm:grid-cols-[1fr_auto_auto] sm:items-end"
+              className={`grid gap-3 rounded-2xl bg-surface p-4 text-foreground shadow-xl ${features.multiBranch ? "sm:grid-cols-[1fr_auto_auto]" : "sm:grid-cols-[1fr_auto]"} sm:items-end`}
             >
               <div>
                 <label htmlFor="home-q" className={labelClass}>
@@ -79,23 +90,26 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
                   className={inputClass}
                 />
               </div>
-              <div>
-                <label htmlFor="home-city" className={labelClass}>
-                  {t("cityLabel")}
-                </label>
-                <select id="home-city" name="city" className={inputClass} defaultValue="">
-                  <option value="">{t("allCities")}</option>
-                  {cities.map((city) => (
-                    <option key={city} value={city}>
-                      {cityLabel(city, locale)}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <CityField
+                enabled={features.multiBranch}
+                id="home-city"
+                cities={cities}
+                locale={locale}
+                label={t("cityLabel")}
+                allLabel={t("allCities")}
+              />
               <button type="submit" className={btnPrimary}>
                 {t("searchButton")}
               </button>
             </form>
+            ) : (
+            <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-surface p-4 text-foreground shadow-xl">
+              <p className="flex-1 text-lg font-semibold">{gate("text", { phone })}</p>
+              <a href={`tel:${dialablePhone(phone)}`} dir="ltr" className={btnPrimary}>
+                {gate("call", { phone })}
+              </a>
+            </div>
+            )}
           </div>
 
           <ul className="hidden gap-3 self-center md:grid" aria-hidden="true">
@@ -109,6 +123,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         </div>
       </section>
 
+{catalog ? (
       <section className={`${container} py-14`}>
         <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
           <div>
@@ -139,6 +154,8 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         </ul>
       </section>
 
+      ) : null}
+
       <section className="bg-surface-muted py-14">
         <div className={container}>
           <h2 className="mb-8 text-2xl font-bold">{t("stepsTitle")}</h2>
@@ -168,6 +185,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         </div>
       </section>
 
+{features.mobileApp ? (
       <section className={`${container} pb-4`}>
         <div className="grid items-center gap-6 rounded-3xl bg-primary p-8 text-primary-foreground md:grid-cols-[1fr_auto] md:p-12">
           <div className="space-y-2">
@@ -185,12 +203,17 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         </div>
       </section>
 
+      ) : null}
+
+{features.website ? (
       <section className={`${container} py-14 text-center`}>
         <h2 className="mb-4 text-2xl font-bold">{t("ctaTitle")}</h2>
         <Link href="/doctors" className={btnPrimary}>
           {t("ctaButton")}
         </Link>
       </section>
+
+      ) : null}
     </main>
   );
 }
