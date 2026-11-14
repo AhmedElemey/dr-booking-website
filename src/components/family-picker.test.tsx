@@ -1,4 +1,4 @@
-import { fireEvent, screen } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { problem, renderWithIntl, stubApi } from "@/test/render";
@@ -98,6 +98,6 @@ describe("FamilyView", () => {
     expect(calls.some((c) => c.key.startsWith("DELETE"))).toBe(false);
     fireEvent.click(screen.getByRole("button", { name: "Yes, remove" }));
     expect(await screen.findByText("Family member removed.")).toBeTruthy();
-    expect(screen.queryByText("Yassin Ahmed")).toBeNull();
+    await waitFor(() => expect(screen.queryByText("Yassin Ahmed")).toBeNull());
   });
 });
