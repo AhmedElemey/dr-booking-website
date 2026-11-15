@@ -116,6 +116,16 @@ export function buildDoctorJsonLd(
   if (doctor.consultationFeeEgp != null) {
     ld.priceRange = `${doctor.consultationFeeEgp} EGP`;
   }
+  // Present only while the reviews feature is on and the doctor has ratings.
+  if (doctor.rating && doctor.rating.count > 0) {
+    ld.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: doctor.rating.average,
+      reviewCount: doctor.rating.count,
+      bestRating: 5,
+      worstRating: 1,
+    };
+  }
   return ld;
 }
 

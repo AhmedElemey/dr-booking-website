@@ -92,11 +92,11 @@ describe("mock backend", () => {
     expect(await ok.json()).toMatchObject({ expiresIn: 900, user: { role: "Patient" } });
   });
 
-  it("starts the demo patient with three appointments", async () => {
+  it("starts the demo patient with five appointments (three upcoming, two past)", async () => {
     const upcoming = (await (await call("/appointments?scope=upcoming", { headers: AUTH })).json()) as Paged<Appointment>;
     const past = (await (await call("/appointments?scope=past", { headers: AUTH })).json()) as Paged<Appointment>;
-    expect(upcoming.totalCount).toBe(2);
-    expect(past.totalCount).toBe(1);
+    expect(upcoming.totalCount).toBe(3);
+    expect(past.totalCount).toBe(2);
     expect(upcoming.items[0]).toMatchObject({ status: "Confirmed", timezone: "Africa/Cairo" });
     expect(upcoming.items[0].startsAtLocal).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:00\+0[23]:00$/);
   });

@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { clinicConfig } from "@/lib/clinic-config";
 import { ApiError } from "@/lib/api/errors";
 import type { Appointment, User } from "@/lib/api/types";
+import type { Features } from "@/lib/features";
 import {
   formatAppointmentDate,
   formatAppointmentTime,
@@ -16,6 +17,10 @@ import {
 
 import { DoctorAvatar } from "./doctor-card";
 import { LoginPanel } from "./login-panel";
+import { canPayOnline, PayButton } from "./pay-button";
+import { PaymentStatusBadge, PaymentSummary } from "./payment-summary";
+import { ReviewForm, YourRating } from "./review-form";
+import { VideoBadge, VideoJoin } from "./video-join";
 import { SlotPicker, type PickedSlot } from "./slot-picker";
 import {
   alertError,
@@ -42,7 +47,14 @@ type View =
       past: Appointment[];
     };
 
-export function AppointmentsView({ selfService = true }: { selfService?: boolean }) {
+export function AppointmentsView({
+  selfService = true,
+  features = {},
+}: {
+  selfService?: boolean;
+  /** Phase-2 feature switches; every extra on the cards is hidden unless its switch is on. */
+  features?: Partial<Features>;
+}) {
   const t = useTranslations("Account");
   const common = useTranslations("Common");
   const api = useApiClient();
@@ -200,6 +212,7 @@ export function AppointmentsView({ selfService = true }: { selfService?: boolean
                 appointment={appointment}
                 upcoming={tab === "upcoming"}
                 selfService={selfService}
+                features={features}
                 onChanged={(message) => {
                   setFlash(message);
                   reload();
@@ -213,6 +226,12 @@ export function AppointmentsView({ selfService = true }: { selfService?: boolean
   );
 }
 
+const INSURANCE_STYLE = {
+  Pending: "bg-accent-soft text-accent",
+  Approved: "bg-success-soft text-success",
+  Rejected: "bg-danger-soft text-danger",
+} as const;
+
 const STATUS_STYLE: Record<Appointment["status"], string> = {
   Confirmed: "bg-success-soft text-success",
   Cancelled: "bg-danger-soft text-danger",
@@ -220,19 +239,22 @@ const STATUS_STYLE: Record<Appointment["status"], string> = {
   NoShow: "bg-danger-soft text-danger",
 };
 
-function AppointmentCard({
+export function AppointmentCard({
   appointment,
   upcoming,
   selfService,
+  features = {},
   onChanged,
 }: {
   appointment: Appointment;
   upcoming: boolean;
   selfService: boolean;
+  features?: Partial<Features>;
   onChanged: (message: string) => void;
 }) {
   const t = useTranslations("Account");
   const common = useTranslations("Common");
+  const family = useTranslations("Family");
   const locale = useLocale();
   const api = useApiClient();
   const errorMessage = useErrorMessage();
@@ -293,6 +315,30 @@ function AppointmentCard({
           <p className="text-sm text-muted">
             {appointment.clinic.name} — {appointment.clinic.address}
           </p>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            {features.videoConsultation && appointment.mode === "Video" ? <VideoBadge /> : null}
+            {features.familyAccounts && appointment.familyMember ? (
+              <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-bold">
+                {t("forMember", {
+                  name: appointment.familyMember.fullName,
+                  relation: family(`relation.${appointment.familyMember.relation}`),
+                })}
+              </span>
+            ) : null}
+            {features.insurance && appointment.insurance ? (
+              <span
+                className={`rounded-full px-3 py-1 text-xs font-bold ${INSURANCE_STYLE[appointment.insurance.status]}`}
+              >
+                {t("insuranceBadge", {
+                  provider: appointment.insurance.provider.name,
+                  status: t(`insuranceStatus.${appointment.insurance.status}`),
+                })}
+              </span>
+            ) : null}
+            {features.onlinePayments && appointment.paymentStatus && appointment.status !== "Cancelled" ? (
+              <PaymentStatusBadge status={appointment.paymentStatus} />
+            ) : null}
+          </div>
         </div>
         <span
           className={`rounded-full px-3 py-1 text-xs font-bold ${STATUS_STYLE[appointment.status]}`}
@@ -310,6 +356,16 @@ function AppointmentCard({
           <div>
             <dt className="text-muted">{t("service")}</dt>
             <dd className="font-medium">{appointment.service.name}</dd>
+          </div>
+        ) : null}
+        {features.insurance && appointment.insurance ? (
+          <div>
+            <dt className="text-muted">{t("insurance")}</dt>
+            <dd className="font-medium">
+              {appointment.insurance.provider.name} —{" "}
+              <span dir="ltr">{appointment.insurance.memberNumber}</span>
+              {appointment.insurance.note ? ` (${appointment.insurance.note})` : ""}
+            </dd>
           </div>
         ) : null}
         {appointment.patientNote ? (
@@ -332,6 +388,13 @@ function AppointmentCard({
         ) : null}
       </dl>
 
+      {(features.onlinePayments || (features.promotions && (appointment.discountEgp ?? 0) > 0)) &&
+      appointment.status !== "Cancelled" ? (
+        <PaymentSummary appointment={appointment} showStatus={Boolean(features.onlinePayments)} />
+      ) : null}
+
+      {features.reviews && appointment.review ? <YourRating review={appointment.review} /> : null}
+
       {error ? (
         <p role="alert" className={alertError}>
           {error}
@@ -340,6 +403,16 @@ function AppointmentCard({
 
       {mode === "idle" ? (
         <div className="flex flex-wrap gap-2">
+          {features.onlinePayments && canPayOnline(appointment) ? (
+            <PayButton appointmentId={appointment.id} pending={appointment.paymentStatus === "Pending"} />
+          ) : null}
+          {features.videoConsultation ? <VideoJoin appointment={appointment} /> : null}
+          {features.reviews && appointment.canReview ? (
+            <ReviewForm appointmentId={appointment.id} onDone={onChanged} />
+          ) : null}
+          <Link href={`/appointments/${appointment.id}`} className={btnSecondary}>
+            {t("details")}
+          </Link>
           <a href={`tel:${appointment.clinic.phone}`} className={btnSecondary}>
             {t("call")}
           </a>

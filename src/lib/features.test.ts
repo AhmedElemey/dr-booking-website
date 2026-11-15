@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { resetMockState } from "./api/mock/backend";
-import { clinicConfig } from "./clinic-config";
+import { clinicConfig, PHASE2_FEATURE_KEYS } from "./clinic-config";
 import {
   activeLocales,
   defaultFeatures,
@@ -48,7 +48,13 @@ describe("normalizeFeatures", () => {
 describe("getFeatures", () => {
   it("is served by the mock backend, with demo overrides", async () => {
     process.env.MOCK_API = "1";
-    expect(await getFeatures()).toEqual(defaultFeatures());
+    // Demo mode switches all 13 phase-2 features on over the config defaults.
+    const demo = await getFeatures();
+    expect(demo).toEqual({
+      ...defaultFeatures(),
+      ...Object.fromEntries(PHASE2_FEATURE_KEYS.map((key) => [key, true])),
+    });
+    expect(PHASE2_FEATURE_KEYS.every((key) => demo[key])).toBe(true);
     resetFeaturesCache();
     process.env.MOCK_FEATURES = '{"website":false,"englishLanguage":false}';
     const features = await getFeatures();

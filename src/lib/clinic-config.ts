@@ -14,6 +14,36 @@ export const FEATURE_KEYS = [
   "smsNotifications",
   "englishLanguage",
   "multiBranch",
+  "videoConsultation",
+  "waitingList",
+  "familyAccounts",
+  "whatsappReminders",
+  "onlinePayments",
+  "insurance",
+  "holidayCalendar",
+  "workingHoursTemplates",
+  "patientRecords",
+  "reviews",
+  "promotions",
+  "recallCampaigns",
+  "reports",
+] as const;
+
+/** The 13 phase-2 features, all off by default; every one hides its screens when off. */
+export const PHASE2_FEATURE_KEYS = [
+  "videoConsultation",
+  "waitingList",
+  "familyAccounts",
+  "whatsappReminders",
+  "onlinePayments",
+  "insurance",
+  "holidayCalendar",
+  "workingHoursTemplates",
+  "patientRecords",
+  "reviews",
+  "promotions",
+  "recallCampaigns",
+  "reports",
 ] as const;
 
 export type FeatureKey = (typeof FEATURE_KEYS)[number];

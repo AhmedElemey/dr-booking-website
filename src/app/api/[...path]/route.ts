@@ -22,7 +22,7 @@ async function handle(
   if (rejected) return rejected;
 
   const { path } = await ctx.params;
-  if (!isProxiedPath(path)) return notFoundResponse();
+  if (!isProxiedPath(path, request.method)) return notFoundResponse();
 
   const result = await proxyAuthenticated({
     path: `/${path.map(encodeURIComponent).join("/")}${request.nextUrl.search}`,

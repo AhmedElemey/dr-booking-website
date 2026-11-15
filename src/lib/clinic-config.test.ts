@@ -6,6 +6,7 @@ import ar from "../../messages/ar.json";
 import en from "../../messages/en.json";
 import {
   FEATURE_KEYS,
+  PHASE2_FEATURE_KEYS,
   applyBrand,
   brandName,
   brandTagline,
@@ -75,7 +76,22 @@ describe("clinic.config.json", () => {
     expect(clinicConfig.slug).toBe(raw.slug);
     expect(clinicConfig.name).toEqual(raw.name);
     expect(clinicConfig.colors).toEqual(raw.colors);
-    expect(FEATURE_KEYS).toHaveLength(8);
+    expect(FEATURE_KEYS).toHaveLength(21);
+  });
+
+  it("ships the 13 phase-2 features, all off by default", () => {
+    expect(PHASE2_FEATURE_KEYS).toHaveLength(13);
+    for (const key of PHASE2_FEATURE_KEYS) {
+      expect(FEATURE_KEYS).toContain(key);
+      expect(clinicConfig.features[key]).toBe(false);
+      expect(rawConfig().features[key]).toBe(false);
+    }
+  });
+
+  it("lists every feature in the JSON schema", () => {
+    const schema = readJson("clinic.config.schema.json") as { properties: { features: { required: string[]; properties: Record<string, unknown> } } };
+    expect([...schema.properties.features.required].sort()).toEqual([...FEATURE_KEYS].sort());
+    expect(Object.keys(schema.properties.features.properties).sort()).toEqual([...FEATURE_KEYS].sort());
   });
 
   it("serves the configured logo from branding/ without a copy step", async () => {

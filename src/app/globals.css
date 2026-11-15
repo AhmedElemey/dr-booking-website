@@ -13,6 +13,7 @@
   --danger-soft: #fde8ec;
   --success: #17794b;
   --success-soft: #def5e8;
+  --star: #d99a00;
   --night: #121437;
   --night-foreground: #f3f2ff;
 }
@@ -29,6 +30,7 @@
     --danger-soft: #3a1626;
     --success: #6fe0a5;
     --success-soft: #11382a;
+    --star: #ffcf4d;
     --night: #080a1f;
     --night-foreground: #f3f2ff;
   }
@@ -50,6 +52,7 @@
   --color-danger-soft: var(--danger-soft);
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
+  --color-star: var(--star);
   --color-night: var(--night);
   --color-night-foreground: var(--night-foreground);
 }

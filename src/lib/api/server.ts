@@ -5,7 +5,10 @@ import type {
   DoctorProfile,
   DoctorSearchParams,
   DoctorSummary,
+  InsuranceProvider,
   Paged,
+  Promotion,
+  Review,
   SlotsResponse,
   Specialty,
 } from "./types";
@@ -64,6 +67,23 @@ export function getDoctorSlots(
 ) {
   return getJson<SlotsResponse>(
     `/doctors/${encodeURIComponent(idOrSlug)}/slots${buildQuery({ from, to })}`,
+    locale,
+  );
+}
+
+/** Public offers for the landing page (promotions feature). */
+export function getPromotions(locale: string) {
+  return getJson<Promotion[]>("/promotions", locale);
+}
+
+/** Active insurance providers for the doctor filter (insurance feature). */
+export function getInsuranceProviders(locale: string) {
+  return getJson<InsuranceProvider[]>("/insurance-providers", locale);
+}
+
+export function getDoctorReviews(locale: string, idOrSlug: string, page = 1) {
+  return getJson<Paged<Review>>(
+    `/doctors/${encodeURIComponent(idOrSlug)}/reviews${buildQuery({ page })}`,
     locale,
   );
 }

@@ -202,6 +202,18 @@ describe("request guards", () => {
     expect(isProxiedPath(["me"])).toBe(true);
     expect(isProxiedPath(["appointments", "abc", "cancel"])).toBe(true);
     expect(isProxiedPath(["doctors", "dr-x", "slots"])).toBe(true);
+    expect(isProxiedPath(["waiting-list"])).toBe(true);
+    expect(isProxiedPath(["coupons", "validate"])).toBe(true);
+    const id = "75a6c2f0-1b2d-4e5f-8a9b-0c1d2e3f4a5b";
+    expect(isProxiedPath(["payments", id])).toBe(true);
+    expect(isProxiedPath(["payments", "return"])).toBe(false);
+    expect(isProxiedPath(["payments", "mock-checkout"])).toBe(false);
+    expect(isProxiedPath(["payments", "p1"])).toBe(false);
+    expect(isProxiedPath(["me", "records", "e1", "attachment"], "GET")).toBe(true);
+    expect(isProxiedPath(["me", "records", "e1", "attachment"], "POST")).toBe(false);
+    expect(isProxiedPath(["me", "records"], "GET")).toBe(true);
+    expect(isProxiedPath(["payments", "webhook", "paymob"])).toBe(false);
+    expect(isProxiedPath(["payments", "mock-checkout", "p1"])).toBe(false);
     expect(isProxiedPath(["dashboard", "appointments"])).toBe(false);
     expect(isProxiedPath(["admin", "clinics"])).toBe(false);
     expect(isProxiedPath(["auth", "refresh"])).toBe(false);

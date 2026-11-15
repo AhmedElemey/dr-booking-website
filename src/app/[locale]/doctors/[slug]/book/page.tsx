@@ -9,6 +9,7 @@ import { container } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { ApiError } from "@/lib/api/errors";
 import { getDoctor } from "@/lib/api/server";
+import { getFeatures } from "@/lib/features";
 import { bookingAccess } from "@/lib/gates";
 import { pageMetadata } from "@/lib/seo";
 
@@ -55,6 +56,7 @@ export default async function BookPage({
   const doctors = await getTranslations({ locale, namespace: "Doctors" });
   if ((await bookingAccess()) !== "open") return <BookingUnavailable />;
   const doctor = await loadDoctor(locale, slug);
+  const features = await getFeatures();
 
   return (
     <main className={`${container} py-10`}>
@@ -75,7 +77,7 @@ export default async function BookPage({
           </p>
         </div>
       </header>
-      <BookingFlow doctor={doctor} />
+      <BookingFlow doctor={doctor} features={features} />
     </main>
   );
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { AccountNav } from "@/components/account-nav";
 import { AppointmentsView } from "@/components/appointments-view";
 import { BookingUnavailable } from "@/components/booking-unavailable";
 import { container } from "@/components/ui";
@@ -33,12 +34,14 @@ export default async function AccountAppointmentsPage({
   const t = await getTranslations({ locale, namespace: "Account" });
 
   if ((await bookingAccess()) !== "open") return <BookingUnavailable />;
-  const { patientSelfService } = await getFeatures();
+  const features = await getFeatures();
+  const { patientSelfService } = features;
 
   return (
     <main className={`${container} py-10`}>
       <h1 className="mb-6 text-3xl font-bold">{t("title")}</h1>
-      <AppointmentsView selfService={patientSelfService} />
+      <AccountNav features={features} />
+      <AppointmentsView selfService={patientSelfService} features={features} />
     </main>
   );
 }
