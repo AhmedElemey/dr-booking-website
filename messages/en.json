@@ -494,6 +494,7 @@
   },
   "Payment": {
     "payOnline": "Pay online",
+    "continuePayment": "Continue payment",
     "redirecting": "Opening checkout…",
     "price": "Price",
     "discount": "Discount",

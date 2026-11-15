@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import type { MyRecords } from "@/lib/api/types";
+import { attachmentHref } from "@/lib/safe-url";
 
 import { AccountGate } from "./account-gate";
 import { FamilyPicker } from "./family-picker";
@@ -130,10 +131,12 @@ function Records({ familyAccounts }: { familyAccounts: boolean }) {
                       </time>
                     </div>
                     {entry.body ? <p className="whitespace-pre-line text-muted">{entry.body}</p> : null}
-                    {entry.doctor ? <p className="text-sm text-muted">{entry.doctor.name}</p> : null}
-                    {entry.attachmentUrl ? (
+                    {entry.doctorName ?? entry.doctor?.name ? (
+                      <p className="text-sm text-muted">{entry.doctorName ?? entry.doctor?.name}</p>
+                    ) : null}
+                    {attachmentHref(entry.attachmentUrl) ? (
                       <a
-                        href={entry.attachmentUrl}
+                        href={attachmentHref(entry.attachmentUrl)!}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm font-semibold text-primary hover:underline"

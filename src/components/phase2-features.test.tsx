@@ -18,6 +18,7 @@ import { BookingFlow } from "./booking-flow";
 import { DoctorCard } from "./doctor-card";
 import { OfferCard } from "./offer-card";
 import { ReviewsList } from "./reviews-list";
+import { RecordsView } from "./records-view";
 import { SettingsView } from "./settings-view";
 import { SlotPicker } from "./slot-picker";
 import { VideoJoin } from "./video-join";
@@ -226,6 +227,23 @@ describe("VideoJoin", () => {
       expect(button.disabled).toBe(false);
       fireEvent.click(button);
       await waitFor(() => expect(open).toHaveBeenCalledWith("https://meet.jit.si/room"));
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("refuses to open a video URL that is not https", async () => {
+    vi.useFakeTimers({ now: startsAt - 10 * 60_000, shouldAdvanceTime: true });
+    try {
+      stubApi({
+        "GET /api/appointments/a1/video": () =>
+          Response.json({ joinUrl: "javascript:alert(1)", opensAt: "", closesAt: "" }),
+      });
+      const open = vi.fn();
+      renderWithIntl(<VideoJoin appointment={video} open={open} />);
+      fireEvent.click(screen.getByRole("button", { name: "Join video" }));
+      expect(await screen.findByRole("alert")).toBeTruthy();
+      expect(open).not.toHaveBeenCalled();
     } finally {
       vi.useRealTimers();
     }
@@ -440,6 +458,33 @@ describe("slot picker with waiting list and holidays", () => {
     expect(screen.getByRole("link", { name: "View my waiting list" }).getAttribute("href")).toBe("/en/account/waiting-list");
   });
 
+  it("does not call /me/family or show the picker for a guest on a full day", async () => {
+    const calls = stubApi({
+      "GET /api/doctors/d/slots": () => Response.json({ doctorId: "d1", timezone: "Africa/Cairo", days: [] }),
+      "GET /api/me": () => problem("UNAUTHORIZED", 401),
+      "GET /api/me/family": () => problem("UNAUTHORIZED", 401),
+    });
+    renderWithIntl(
+      <SlotPicker doctorSlug="d" timezone="Africa/Cairo" onSelect={vi.fn()} features={{ waitingList: true, familyAccounts: true }} />,
+    );
+    await screen.findByRole("button", { name: "Join the waiting list" });
+    await waitFor(() => expect(calls.some((c) => c.key === "GET /api/me")).toBe(true));
+    expect(calls.some((c) => c.key === "GET /api/me/family")).toBe(false);
+    expect(screen.queryByRole("alert")).toBeNull();
+  });
+
+  it("shows the family picker on a full day once signed in", async () => {
+    stubApi({
+      "GET /api/doctors/d/slots": () => Response.json({ doctorId: "d1", timezone: "Africa/Cairo", days: [] }),
+      "GET /api/me": () => Response.json(patient),
+      "GET /api/me/family": () => Response.json([]),
+    });
+    renderWithIntl(
+      <SlotPicker doctorSlug="d" timezone="Africa/Cairo" onSelect={vi.fn()} features={{ waitingList: true, familyAccounts: true }} />,
+    );
+    expect(await screen.findByLabelText(/Booking for/)).toBeTruthy();
+  });
+
   it("maps ALREADY_WAITING and asks guests to sign in", async () => {
     let attempt = 0;
     stubApi({
@@ -548,5 +593,36 @@ describe("ReviewsList", () => {
     expect(await screen.findByText("Comment 3")).toBeTruthy();
     expect(calls[0].key).toBe("GET /api/doctors/sara-hassan/reviews");
     expect(screen.queryByRole("button", { name: /Show more/ })).toBeNull();
+  });
+});
+
+// --- records -----------------------------------------------------------------------------------
+
+describe("my records", () => {
+  it("shows the flat doctorName and opens attachments through the site proxy", async () => {
+    stubApi({
+      "GET /api/me": () => Response.json(patient),
+      "GET /api/me/records": () =>
+        Response.json({
+          medicalInfo: null,
+          entries: [
+            {
+              id: "e1",
+              kind: "Diagnosis",
+              title: "Mild gingivitis",
+              body: null,
+              attachmentUrl: "/api/v1/me/records/e1/attachment",
+              doctorName: "Dr. Amr Hassan",
+              createdAt: "2026-11-01T09:30:00Z",
+            },
+            { id: "e2", kind: "Note", title: "Unsafe", attachmentUrl: "javascript:alert(1)", createdAt: "2026-11-01T09:30:00Z" },
+          ],
+        }),
+    });
+    renderWithIntl(<RecordsView familyAccounts={false} />);
+    expect(await screen.findByText("Dr. Amr Hassan")).toBeTruthy();
+    const links = screen.getAllByRole("link", { name: /attachment/i });
+    expect(links).toHaveLength(1);
+    expect(links[0].getAttribute("href")).toBe("/api/me/records/e1/attachment");
   });
 });

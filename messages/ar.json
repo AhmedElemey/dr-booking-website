@@ -494,6 +494,7 @@
   },
   "Payment": {
     "payOnline": "ادفع إلكترونيًا",
+    "continuePayment": "أكمل الدفع",
     "redirecting": "جارٍ فتح صفحة الدفع…",
     "price": "السعر",
     "discount": "الخصم",

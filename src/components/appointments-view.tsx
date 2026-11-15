@@ -404,7 +404,7 @@ export function AppointmentCard({
       {mode === "idle" ? (
         <div className="flex flex-wrap gap-2">
           {features.onlinePayments && canPayOnline(appointment) ? (
-            <PayButton appointmentId={appointment.id} />
+            <PayButton appointmentId={appointment.id} pending={appointment.paymentStatus === "Pending"} />
           ) : null}
           {features.videoConsultation ? <VideoJoin appointment={appointment} /> : null}
           {features.reviews && appointment.canReview ? (

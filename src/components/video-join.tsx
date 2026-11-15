@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import type { Appointment } from "@/lib/api/types";
 import { formatLocalTime, zonedParts } from "@/lib/datetime";
+import { safeNavigationUrl } from "@/lib/safe-url";
 
 import { alertError, btnPrimary, btnSecondary } from "./ui";
 import { useNow } from "./use-now";
@@ -24,9 +25,10 @@ export function videoWindow(appointment: Pick<Appointment, "startsAt" | "endsAt"
 /** "Join video" for a confirmed video visit; enabled only inside the join window. */
 export function VideoJoin({
   appointment,
-  open = (url) => window.open(url, "_blank", "noopener,noreferrer"),
+  open,
 }: {
   appointment: Appointment;
+  /** Test hook; by default a blank tab is opened synchronously and pointed at the link. */
   open?: (url: string) => void;
 }) {
   const t = useTranslations("Video");
@@ -45,10 +47,21 @@ export function VideoJoin({
   async function join() {
     setBusy(true);
     setError(null);
+    // Open the tab before the await so Safari does not treat it as a popup.
+    let tab: Window | null = null;
+    if (!open) {
+      tab = window.open("", "_blank");
+      if (tab) tab.opener = null;
+    }
     try {
       const { joinUrl } = await api.getVideoAccess(appointment.id);
-      open(joinUrl);
+      const safe = safeNavigationUrl(joinUrl);
+      if (!safe) throw new Error("Unsafe video URL");
+      if (open) open(safe);
+      else if (tab) tab.location.href = safe;
+      else window.location.assign(safe);
     } catch (err) {
+      tab?.close();
       setError(errorMessage(err));
     } finally {
       setBusy(false);

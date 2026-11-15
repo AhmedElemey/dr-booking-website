@@ -230,6 +230,9 @@ export type RecordEntry = {
   title: string;
   body?: string | null;
   attachmentUrl?: string | null;
+  /** Flat name as the API sends it. */
+  doctorName?: string | null;
+  /** Nested form, kept for the demo backend. */
   doctor?: { id: string; name: string } | null;
   createdAt: string;
 };

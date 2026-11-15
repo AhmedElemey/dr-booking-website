@@ -104,6 +104,22 @@ describe("PayButton", () => {
     expect(sessionStorage.getItem("ml-payment-a1")).toBe("p9");
   });
 
+  it("labels the button 'Continue payment' for a pending checkout", () => {
+    renderWithIntl(<PayButton appointmentId="a1" pending navigate={vi.fn()} />);
+    expect(screen.getByRole("button", { name: "Continue payment" })).toBeTruthy();
+  });
+
+  it("refuses to navigate to an unsafe checkout URL", async () => {
+    stubApi({
+      "POST /api/appointments/a1/pay": () => Response.json({ paymentId: "p1", checkoutUrl: "javascript:alert(1)" }),
+    });
+    const navigate = vi.fn();
+    renderWithIntl(<PayButton appointmentId="a1" navigate={navigate} />);
+    fireEvent.click(screen.getByRole("button", { name: "Pay online" }));
+    expect(await screen.findByRole("alert")).toBeTruthy();
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
   it("maps PAYMENT_NOT_ALLOWED to a friendly message and stays on the page", async () => {
     stubApi({ "POST /api/appointments/a1/pay": () => problem("PAYMENT_NOT_ALLOWED", 409) });
     const navigate = vi.fn();
@@ -117,6 +133,7 @@ describe("PayButton", () => {
 describe("canPayOnline", () => {
   const base = {
     status: "Confirmed",
+    startsAt: "2099-01-01T09:30:00Z",
     endsAt: "2099-01-01T10:00:00Z",
     paymentStatus: "Unpaid",
     totalEgp: 300,
@@ -124,9 +141,16 @@ describe("canPayOnline", () => {
   it("needs a confirmed, future, unpaid appointment with something to pay", () => {
     expect(canPayOnline(base)).toBe(true);
     expect(canPayOnline({ ...base, paymentStatus: "Paid" })).toBe(false);
-    expect(canPayOnline({ ...base, paymentStatus: "Pending" })).toBe(false);
+    // An abandoned checkout stays Pending; a new payment supersedes it.
+    expect(canPayOnline({ ...base, paymentStatus: "Pending" })).toBe(true);
+    expect(canPayOnline({ ...base, paymentStatus: "Refunded" })).toBe(false);
     expect(canPayOnline({ ...base, totalEgp: 0 })).toBe(false);
     expect(canPayOnline({ ...base, status: "Cancelled" })).toBe(false);
-    expect(canPayOnline({ ...base, endsAt: "2000-01-01T10:00:00Z" })).toBe(false);
+    expect(canPayOnline({ ...base, startsAt: "2000-01-01T09:30:00Z", endsAt: "2000-01-01T10:00:00Z" })).toBe(false);
+  });
+  it("stops once the visit has started, as the API requires a future start", () => {
+    const now = Date.parse("2099-01-01T09:45:00Z");
+    expect(canPayOnline(base, now)).toBe(false);
+    expect(canPayOnline(base, Date.parse("2099-01-01T09:00:00Z"))).toBe(true);
   });
 });

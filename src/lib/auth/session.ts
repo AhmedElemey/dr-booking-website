@@ -103,10 +103,23 @@ const PROXIED_ROOTS = new Set([
   "insurance-providers",
 ]);
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 /** Only patient/public endpoints are reachable through the browser proxy. */
-export function isProxiedPath(segments: string[]): boolean {
-  // Only `GET /payments/{id}` is a patient call; webhooks and the mock checkout stay server-to-server.
-  if (segments[0] === "payments" && (segments.length !== 2 || segments[1] === "webhook")) {
+export function isProxiedPath(segments: string[], method = "GET"): boolean {
+  // Only `GET /payments/{id}` is a patient call; the return redirect, webhooks and
+  // the mock checkout stay server-to-server.
+  if (segments[0] === "payments" && !(segments.length === 2 && UUID.test(segments[1]))) {
+    return false;
+  }
+  // Record attachments are binary downloads: GET only.
+  if (
+    segments[0] === "me" &&
+    segments[1] === "records" &&
+    segments.length > 2 &&
+    method !== "GET" &&
+    method !== "HEAD"
+  ) {
     return false;
   }
   return (
@@ -178,6 +191,10 @@ function toResponse(upstream: Response): Response {
   const headers = new Headers();
   const type = upstream.headers.get("content-type");
   if (type) headers.set("content-type", type);
+  // Attachments: keep the filename and stop the browser guessing a type.
+  const disposition = upstream.headers.get("content-disposition");
+  if (disposition) headers.set("content-disposition", disposition);
+  headers.set("x-content-type-options", "nosniff");
   headers.set("cache-control", "no-store");
   const noBody = upstream.status === 204 || upstream.status === 304;
   return new Response(noBody ? null : upstream.body, {

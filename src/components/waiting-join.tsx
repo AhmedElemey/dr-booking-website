@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Link } from "@/i18n/navigation";
 import { ApiError } from "@/lib/api/errors";
@@ -31,6 +31,24 @@ export function WaitingJoin({
   const [busy, setBusy] = useState(false);
   const [joinedFor, setJoinedFor] = useState<string | null>(null);
   const [error, setError] = useState<{ message: string; signIn: boolean } | null>(null);
+
+  // The family picker calls `/me/family`, which is a 401 for guests: show it only once signed in.
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => {
+    if (!familyAccounts) return;
+    let cancelled = false;
+    api
+      .getMe()
+      .then((user) => {
+        if (!cancelled) setSignedIn(user.role === "Patient");
+      })
+      .catch(() => {
+        if (!cancelled) setSignedIn(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [api, familyAccounts]);
 
   async function join() {
     setBusy(true);
@@ -66,7 +84,7 @@ export function WaitingJoin({
     <div className="space-y-3 rounded-2xl border border-dashed border-border bg-surface p-4">
       <p className="font-bold">{t("fullDayTitle")}</p>
       <p className="text-sm text-muted">{t("fullDayText")}</p>
-      {familyAccounts ? (
+      {familyAccounts && signedIn ? (
         <FamilyPicker id={`w-for-${date}`} value={memberId} onChange={setMemberId} showManageLink={false} />
       ) : null}
       {error ? (

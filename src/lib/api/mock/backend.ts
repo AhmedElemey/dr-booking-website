@@ -920,7 +920,7 @@ export async function handleMockRequest(
           title: localized(e.title, lang),
           body: localized(e.body, lang),
           attachmentUrl: null,
-          doctor: { id: doctors[e.doctorIndex].id, name: localized(doctors[e.doctorIndex].name, lang) },
+          doctorName: localized(doctors[e.doctorIndex].name, lang),
           createdAt: new Date(now.getTime() - e.daysAgo * 86_400_000).toISOString(),
         })),
       });

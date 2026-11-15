@@ -516,7 +516,7 @@ export function BookingFlow({
           </p>
           <div className="flex flex-wrap gap-3">
             {features.onlinePayments && canPayOnline(appointment) ? (
-              <PayButton appointmentId={appointment.id} />
+              <PayButton appointmentId={appointment.id} pending={appointment.paymentStatus === "Pending"} />
             ) : null}
             <button type="button" onClick={downloadIcs} className={btnSecondary}>
               {t("addToCalendar")}
