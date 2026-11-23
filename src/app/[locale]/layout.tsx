@@ -28,6 +28,7 @@ export async function generateMetadata({
     title: { default: `${name} | ${brandTagline(locale)}`, template: `%s | ${name}` },
     description: t("description"),
     applicationName: name,
+    ...(process.env.HOSTED_TEST === "1" ? { robots: { index: false, follow: false, noarchive: true } } : {}),
     icons: { icon: logoPublicPath() },
   };
 }
@@ -57,6 +58,13 @@ export default async function LocaleLayout({
       </head>
       <body className="flex min-h-full flex-col">
         <NextIntlClientProvider>
+          {process.env.HOSTED_TEST === "1" && (
+            <aside role="note" className="border-b border-amber-300 bg-amber-100 px-4 py-3 text-center font-semibold text-amber-950">
+              {locale === "ar"
+                ? "نسخة اختبار ببيانات وهمية. لا تدخل بيانات مرضى حقيقية. الدفع والرسائل الفعلية متوقفان."
+                : "Test system with synthetic data. Do not enter real patient details. Real payments and messages are disabled."}
+            </aside>
+          )}
           <SiteHeader features={features} />
           <div className="flex flex-1 flex-col">{children}</div>
           <SiteFooter features={features} />
