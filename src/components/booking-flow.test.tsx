@@ -87,6 +87,22 @@ describe("BookingFlow", () => {
     expect(screen.getByText(/Pay at the clinic/)).toBeTruthy();
   });
 
+  it("tells the patient a Pending booking was received and awaits clinic confirmation", async () => {
+    stubApi({
+      "GET /api/doctors/sara-hassan/slots": () => Response.json(slots),
+      "GET /api/me": () => Response.json(patient),
+      "POST /api/appointments": () => Response.json({ ...appointment, status: "Pending" }, { status: 201 }),
+    });
+    renderWithIntl(<BookingFlow doctor={doctor} />);
+
+    await pickFirstSlot();
+    fireEvent.click(await screen.findByRole("button", { name: "Confirm booking" }));
+
+    expect(await screen.findByText("We received your booking")).toBeTruthy();
+    expect(screen.getByText(/awaiting clinic confirmation/)).toBeTruthy();
+    expect(screen.queryByText("Your appointment is confirmed")).toBeNull();
+  });
+
   it("returns to the slot picker with a localized error when the slot was just taken", async () => {
     let slotLoads = 0;
     stubApi({
