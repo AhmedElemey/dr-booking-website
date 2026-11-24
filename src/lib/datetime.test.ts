@@ -8,6 +8,7 @@ import {
   formatEgp,
   formatHHmm,
   parseLocal,
+  timezoneLabel,
   todayInZone,
   toLocalIso,
   toLocalIsoWithOffset,
@@ -93,5 +94,13 @@ describe("formatEgp", () => {
     expect(formatEgp(300, "en")).toMatch(/EGP/);
     expect(formatEgp(300, "en")).toMatch(/300/);
     expect(formatEgp(1250, "ar")).toContain("١٬٢٥٠");
+  });
+});
+
+describe("timezoneLabel", () => {
+  it("localizes Africa/Cairo and falls back to the IANA name", () => {
+    expect(timezoneLabel("Africa/Cairo", "ar")).toBe("القاهرة");
+    expect(timezoneLabel("Africa/Cairo", "en")).toBe("Cairo");
+    expect(timezoneLabel("Europe/Berlin", "ar")).toBe("Europe/Berlin");
   });
 });

@@ -212,3 +212,9 @@ export function formatWeekdayShort(date: string, locale: string): string {
 export function formatPlain(value: number, locale: string): string {
   return new Intl.NumberFormat(intlLocale(locale), { useGrouping: false }).format(value);
 }
+
+/** Human-readable label for the clinic timezone; falls back to the IANA name. */
+export function timezoneLabel(tz: string, locale: string): string {
+  if (tz === "Africa/Cairo") return locale === "ar" ? "القاهرة" : "Cairo";
+  return tz;
+}
