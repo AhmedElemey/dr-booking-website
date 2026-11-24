@@ -10,6 +10,7 @@ const STATUS_STYLE: Record<PaymentStatus, string> = {
   Pending: "bg-accent-soft text-accent",
   Paid: "bg-success-soft text-success",
   Refunded: "bg-surface-muted text-muted",
+  DepositPaid: "bg-accent-soft text-accent",
 };
 
 export function PaymentStatusBadge({ status }: { status: PaymentStatus }) {
@@ -26,15 +27,16 @@ export function PaymentSummary({
   appointment,
   showStatus,
 }: {
-  appointment: Pick<Appointment, "priceEgp" | "discountEgp" | "totalEgp" | "paymentStatus">;
+  appointment: Pick<Appointment, "priceEgp" | "discountEgp" | "totalEgp" | "paymentStatus" | "depositPaidEgp">;
   showStatus: boolean;
 }) {
   const t = useTranslations("Payment");
   const locale = useLocale();
-  const { priceEgp, discountEgp, totalEgp, paymentStatus } = appointment;
+  const { priceEgp, discountEgp, totalEgp, paymentStatus, depositPaidEgp } = appointment;
   if (priceEgp == null) return null;
   const discount = discountEgp ?? 0;
   const total = totalEgp ?? Math.max(0, priceEgp - discount);
+  const deposit = showStatus && paymentStatus === "DepositPaid" ? (depositPaidEgp ?? 0) : 0;
 
   return (
     <div className="space-y-1 rounded-xl bg-surface-muted p-3 text-sm">
@@ -52,6 +54,18 @@ export function PaymentSummary({
         <span>{t("total")}</span>
         <span>{formatEgp(total, locale)}</span>
       </div>
+      {deposit > 0 ? (
+        <>
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-muted">{t("depositPaid")}</span>
+            <span>{formatEgp(deposit, locale)}</span>
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-muted">{t("balanceAtClinic")}</span>
+            <span>{formatEgp(Math.max(0, total - deposit), locale)}</span>
+          </div>
+        </>
+      ) : null}
       {showStatus && paymentStatus ? (
         <div className="flex items-center justify-between gap-3 pt-1">
           <span className="text-muted">{t("statusLabel")}</span>

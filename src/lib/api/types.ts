@@ -90,7 +90,7 @@ export type AppointmentStatus =
   | "NoShow";
 
 export type AppointmentMode = "InPerson" | "Video";
-export type PaymentStatus = "Unpaid" | "Pending" | "Paid" | "Refunded";
+export type PaymentStatus = "Unpaid" | "Pending" | "Paid" | "Refunded" | "DepositPaid";
 export type InsuranceStatus = "Pending" | "Approved" | "Rejected";
 export type FamilyRelation = "Child" | "Spouse" | "Parent" | "Sibling" | "Other";
 
@@ -132,6 +132,9 @@ export type Appointment = {
   discountEgp?: number | null;
   totalEgp?: number | null;
   paymentStatus?: PaymentStatus;
+  /** Booking deposit: the part paid online. The rest is settled at the clinic. */
+  depositRequiredEgp?: number;
+  depositPaidEgp?: number;
   /** Family accounts feature. */
   familyMember?: FamilyMemberRef | null;
   /** Insurance feature. */
@@ -192,7 +195,8 @@ export type CouponReason =
 export type CouponCheck = {
   valid: boolean;
   discountEgp: number;
-  totalEgp: number;
+  /** Null while the clinic hides prices. */
+  totalEgp: number | null;
   reason?: CouponReason | null;
 };
 

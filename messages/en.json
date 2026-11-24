@@ -509,8 +509,11 @@
       "Unpaid": "Pay at the clinic",
       "Pending": "Payment pending",
       "Paid": "Paid",
-      "Refunded": "Refunded"
+      "Refunded": "Refunded",
+      "DepositPaid": "Deposit paid"
     },
+    "depositPaid": "Deposit paid online",
+    "balanceAtClinic": "Balance at the clinic",
     "checking": "Checking your payment…",
     "unknown": "Welcome back. Your appointment is shown below with its latest payment status.",
     "paidTitle": "Payment received.",
