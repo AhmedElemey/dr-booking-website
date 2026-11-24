@@ -28,7 +28,7 @@ import {
 } from "./fixtures";
 import type { MockCoupon, MockDoctor } from "./fixtures";
 
-// In-memory stand-in for the Moonlight API (MOCK_API=1). It follows the spec's
+// In-memory stand-in for the Dr booking API (MOCK_API=1). It follows the spec's
 // contract closely enough for the website to be demoed without the backend:
 // localized public reads, OTP login, booking rules and problem+json errors.
 
@@ -112,10 +112,10 @@ const MAX_UPCOMING = 3;
 const DAYS_AHEAD = 10;
 const SLOT_MINUTES = 30;
 
-const globalStore = globalThis as unknown as { __moonlightMock?: MockState };
+const globalStore = globalThis as unknown as { __drbookingMock?: MockState };
 
 function state(): MockState {
-  globalStore.__moonlightMock ??= {
+  globalStore.__drbookingMock ??= {
     slots: [],
     appointments: [],
     family: [],
@@ -131,12 +131,12 @@ function state(): MockState {
     },
     nextId: 1,
   };
-  return globalStore.__moonlightMock;
+  return globalStore.__drbookingMock;
 }
 
 /** Test hook: forget all demo state. */
 export function resetMockState() {
-  globalStore.__moonlightMock = undefined;
+  globalStore.__drbookingMock = undefined;
 }
 
 function newId(prefix: string): string {
@@ -357,7 +357,7 @@ function problem(
   const status = opts.status ?? p.status;
   return Response.json(
     {
-      type: `https://moonlight.example/errors/${code.toLowerCase().replaceAll("_", "-")}`,
+      type: `https://drbooking.example/errors/${code.toLowerCase().replaceAll("_", "-")}`,
       title: p.en,
       status,
       code,
@@ -1218,7 +1218,7 @@ export async function handleMockRequest(
         const closesAt = new Date(slot.endsAt.getTime() + VIDEO_CLOSES_MINUTES * 60_000);
         if (now < opensAt || now > closesAt) return problem("VIDEO_NOT_OPEN", lang);
         return Response.json({
-          joinUrl: `https://meet.jit.si/moonlight-${appt.id.replaceAll("-", "").slice(-12)}`,
+          joinUrl: `https://meet.jit.si/drbooking-${appt.id.replaceAll("-", "").slice(-12)}`,
           opensAt: opensAt.toISOString(),
           closesAt: closesAt.toISOString(),
         });
