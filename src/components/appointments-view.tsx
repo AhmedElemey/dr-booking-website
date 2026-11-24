@@ -235,6 +235,8 @@ const INSURANCE_STYLE = {
 const STATUS_STYLE: Record<Appointment["status"], string> = {
   Pending: "bg-accent-soft text-accent",
   Confirmed: "bg-success-soft text-success",
+  CheckedIn: "bg-success-soft text-success",
+  InProgress: "bg-success-soft text-success",
   Cancelled: "bg-danger-soft text-danger",
   Completed: "bg-surface-muted text-muted",
   NoShow: "bg-danger-soft text-danger",
