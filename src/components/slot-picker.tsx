@@ -11,6 +11,7 @@ import {
   formatHHmm,
   formatPlain,
   formatWeekdayShort,
+  timezoneLabel,
   todayInZone,
 } from "@/lib/datetime";
 
@@ -243,7 +244,7 @@ export function SlotPicker({
         </ul>
         )}
         <p className="mt-3 text-xs text-muted">
-          {common("timezoneNote", { timezone: loaded.timezone })}
+          {common("timezoneNote", { timezone: timezoneLabel(loaded.timezone, locale) })}
         </p>
       </div>
     </div>
