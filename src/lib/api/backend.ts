@@ -7,7 +7,7 @@ export type BackendInit = RequestInit & {
 };
 
 /**
- * Server-side entry point to the Moonlight API. `path` is relative to `/api/v1`
+ * Server-side entry point to the Dr booking API. `path` is relative to `/api/v1`
  * (leading slash, optional query). With `MOCK_API=1` the request is answered
  * from in-memory fixtures; otherwise it is a plain `fetch` to the real API.
  */
