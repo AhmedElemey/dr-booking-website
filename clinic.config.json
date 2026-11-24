@@ -1,13 +1,13 @@
 {
   "$schema": "./clinic.config.schema.json",
-  "slug": "moonlight",
-  "name": { "ar": "مونلايت", "en": "Moonlight" },
+  "slug": "drbooking",
+  "name": { "ar": "دكتور بوكينج", "en": "Dr booking" },
   "tagline": { "ar": "احجز طبيب أسنانك في دقيقة", "en": "Book your dentist in a minute" },
   "colors": { "primary": "#3F3CCF", "accent": "#0E9F9A" },
   "logo": "branding/logo.svg",
   "supportPhone": "+201000000000",
-  "website": { "domain": "moonlight.example" },
-  "mobile": { "androidApplicationId": "com.moonlight.app", "iosBundleId": "com.moonlight.app" },
+  "website": { "domain": "drbooking.example" },
+  "mobile": { "androidApplicationId": "com.drbooking.app", "iosBundleId": "com.drbooking.app" },
   "console": { "url": "", "clinicId": "" },
   "features": {
     "mobileApp": true,
