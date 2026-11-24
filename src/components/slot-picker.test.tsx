@@ -37,7 +37,8 @@ describe("SlotPicker", () => {
 
     const first = await screen.findByRole("button", { name: /^0?9:00\s?am$/i });
     expect(calls[0].key).toBe("GET /api/doctors/sara-hassan/slots");
-    expect(screen.getByText(/Africa\/Cairo/)).toBeTruthy();
+    expect(screen.getByText(/shown in Cairo/)).toBeTruthy();
+    expect(screen.queryByText(/Africa\/Cairo/)).toBeNull();
 
     fireEvent.click(first);
     expect(onSelect).toHaveBeenCalledWith({ slot: slots.days[0].slots[0], date: "2026-11-02" });
