@@ -1,6 +1,6 @@
-# moonlight-website
+# dr-booking-website
 
-Public website for Moonlight, a dentist reservation platform. Next.js 16 (App Router), TypeScript, Tailwind CSS and `next-intl` with `/ar` (default, RTL) and `/en` routes. The product spec lives in [moonlight-backend/docs/SPEC.md](https://github.com/AhmedElemey/moonlight-backend/blob/main/docs/SPEC.md).
+Public website for Dr booking, a dentist reservation platform. Next.js 16 (App Router), TypeScript, Tailwind CSS and `next-intl` with `/ar` (default, RTL) and `/en` routes. The product spec lives in [dr-booking-backend/docs/SPEC.md](https://github.com/AhmedElemey/dr-booking-backend/blob/main/docs/SPEC.md).
 
 ## Develop
 
@@ -20,7 +20,7 @@ npm run build
 
 ## Backend settings the website depends on
 
-Set these on the Moonlight API (`moonlight-backend`), not here:
+Set these on the Dr booking API (`dr-booking-backend`), not here:
 
 - `Payments__PublicBaseUrl` (required): the public origin of the API. Without it the Mock payment provider builds `checkoutUrl` from the request host, which behind an internal API URL (for example `http://api:8080` in Docker) is unreachable from the patient's browser.
 - Return URL allow-list: the site sends `<origin>/<locale>/appointments/<id>?payment=return` as `returnUrl`, built from the browser's origin. The API accepts only hosts listed in `Payments__ReturnUrlHosts__N` plus `website.domain` from its `clinic.config.json` (the `www.` variant is accepted too). List every other host the site is served from, or paying answers `400 returnUrl is not on the allow-list`.
