@@ -473,8 +473,12 @@ export function BookingFlow({
               ✓
             </span>
             <div>
-              <h2 className="text-xl font-bold">{t("successTitle")}</h2>
-              <p className="text-sm text-muted">{t("successText")}</p>
+              <h2 className="text-xl font-bold">
+                {t(appointment.status === "Pending" ? "successPendingTitle" : "successTitle")}
+              </h2>
+              <p className="text-sm text-muted">
+                {t(appointment.status === "Pending" ? "successPendingText" : "successText")}
+              </p>
             </div>
           </div>
           <dl className="space-y-3 rounded-xl bg-surface-muted p-4 text-sm">

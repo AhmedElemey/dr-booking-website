@@ -161,6 +161,8 @@
     "confirming": "Confirming…",
     "successTitle": "Your appointment is confirmed",
     "successText": "Save the details below. You can cancel or reschedule from your account.",
+    "successPendingTitle": "We received your booking",
+    "successPendingText": "Your booking is awaiting clinic confirmation. We will let you know once the clinic confirms it. You can cancel it from your account.",
     "addToCalendar": "Add to calendar",
     "viewAppointments": "View my appointments",
     "backToDoctors": "Find another dentist",
@@ -219,7 +221,10 @@
     "loginText": "Enter your mobile number and we will send you a one-time code.",
     "loadError": "We could not load your appointments.",
     "status": {
+      "Pending": "Pending",
       "Confirmed": "Confirmed",
+      "CheckedIn": "Checked in",
+      "InProgress": "With the doctor",
       "Cancelled": "Cancelled",
       "Completed": "Completed",
       "NoShow": "Missed"

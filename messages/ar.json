@@ -161,6 +161,8 @@
     "confirming": "جارٍ التأكيد…",
     "successTitle": "تم تأكيد موعدك",
     "successText": "احتفظ بالتفاصيل أدناه. يمكنك الإلغاء أو تغيير الموعد من حسابك.",
+    "successPendingTitle": "استلمنا حجزك",
+    "successPendingText": "حجزك بانتظار تأكيد العيادة. سنخبرك بمجرد أن تؤكده العيادة. يمكنك إلغاءه من حسابك.",
     "addToCalendar": "أضف إلى التقويم",
     "viewAppointments": "عرض مواعيدي",
     "backToDoctors": "ابحث عن طبيب آخر",
@@ -219,7 +221,10 @@
     "loginText": "أدخل رقم موبايلك وسنرسل لك رمزًا لمرة واحدة.",
     "loadError": "تعذّر تحميل مواعيدك.",
     "status": {
+      "Pending": "بانتظار التأكيد",
       "Confirmed": "مؤكد",
+      "CheckedIn": "تم تسجيل وصولك",
+      "InProgress": "مع الدكتور",
       "Cancelled": "ملغي",
       "Completed": "مكتمل",
       "NoShow": "لم يتم الحضور"

@@ -233,7 +233,10 @@ const INSURANCE_STYLE = {
 } as const;
 
 const STATUS_STYLE: Record<Appointment["status"], string> = {
+  Pending: "bg-accent-soft text-accent",
   Confirmed: "bg-success-soft text-success",
+  CheckedIn: "bg-success-soft text-success",
+  InProgress: "bg-success-soft text-success",
   Cancelled: "bg-danger-soft text-danger",
   Completed: "bg-surface-muted text-muted",
   NoShow: "bg-danger-soft text-danger",
@@ -266,8 +269,10 @@ export function AppointmentCard({
   const [error, setError] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // The API lists a visit under "upcoming" only while it is Confirmed and still ahead.
-  const active = upcoming && appointment.status === "Confirmed";
+  // The API lists a visit under "upcoming" while it is still ahead; a Pending visit can
+  // only be cancelled (rescheduling needs a confirmed slot on the backend).
+  const active = upcoming && (appointment.status === "Confirmed" || appointment.status === "Pending");
+  const reschedulable = upcoming && appointment.status === "Confirmed";
 
   async function run(action: () => Promise<unknown>, success: string) {
     setBusy(true);
@@ -421,9 +426,11 @@ export function AppointmentCard({
           </a>
           {active && selfService ? (
             <>
-              <button type="button" className={btnSecondary} onClick={() => setMode("reschedule")}>
-                {t("reschedule")}
-              </button>
+              {reschedulable ? (
+                <button type="button" className={btnSecondary} onClick={() => setMode("reschedule")}>
+                  {t("reschedule")}
+                </button>
+              ) : null}
               <button type="button" className={btnGhost} onClick={() => setMode("cancel")}>
                 {t("cancel")}
               </button>

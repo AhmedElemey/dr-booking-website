@@ -81,7 +81,10 @@ export type SlotsResponse = {
 };
 
 export type AppointmentStatus =
+  | "Pending"
   | "Confirmed"
+  | "CheckedIn"
+  | "InProgress"
   | "Cancelled"
   | "Completed"
   | "NoShow";
