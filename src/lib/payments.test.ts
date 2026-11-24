@@ -12,8 +12,8 @@ import {
 
 describe("paymentReturnUrl", () => {
   it("is <site origin>/<locale>/appointments/<id>?payment=return", () => {
-    expect(paymentReturnUrl("https://moonlight.example", "ar", "a1")).toBe(
-      "https://moonlight.example/ar/appointments/a1?payment=return",
+    expect(paymentReturnUrl("https://drbooking.example", "ar", "a1")).toBe(
+      "https://drbooking.example/ar/appointments/a1?payment=return",
     );
     expect(paymentReturnUrl("http://localhost:3000/", "en", "a b")).toBe(
       "http://localhost:3000/en/appointments/a%20b?payment=return",

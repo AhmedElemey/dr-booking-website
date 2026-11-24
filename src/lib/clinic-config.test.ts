@@ -160,7 +160,7 @@ describe("brand helpers", () => {
 
   it("keeps the clinic name out of the translations", () => {
     const text = JSON.stringify([ar, en]);
-    expect(text).not.toMatch(/moonlight/i);
+    expect(text).not.toMatch(/moonlight|dr booking/i);
     expect(text).not.toContain("مون لايت");
     expect(text).not.toContain(clinicConfig.name.ar);
     expect(JSON.stringify(en)).toContain("{brand}");

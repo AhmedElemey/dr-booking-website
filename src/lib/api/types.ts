@@ -1,4 +1,4 @@
-// Response shapes of the Moonlight API (spec section 4). Public read responses are
+// Response shapes of the Dr booking API (spec section 4). Public read responses are
 // already localized by the `Accept-Language` header, so names are single strings.
 
 export type Paged<T> = {

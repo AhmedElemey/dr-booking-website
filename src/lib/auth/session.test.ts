@@ -228,14 +228,14 @@ describe("request guards", () => {
   });
 
   it("accepts same-origin and header-less requests, rejects foreign origins", () => {
-    expect(isSameOrigin(null, "moonlight.example")).toBe(true);
-    expect(isSameOrigin("https://moonlight.example", "moonlight.example")).toBe(true);
-    expect(isSameOrigin("https://evil.example", "moonlight.example")).toBe(false);
-    expect(isSameOrigin("not a url", "moonlight.example")).toBe(false);
+    expect(isSameOrigin(null, "drbooking.example")).toBe(true);
+    expect(isSameOrigin("https://drbooking.example", "drbooking.example")).toBe(true);
+    expect(isSameOrigin("https://evil.example", "drbooking.example")).toBe(false);
+    expect(isSameOrigin("not a url", "drbooking.example")).toBe(false);
   });
 
   it("marks cookies Secure behind https and proxies", () => {
-    expect(isSecureRequest("https://moonlight.example/api/me", null)).toBe(true);
+    expect(isSecureRequest("https://drbooking.example/api/me", null)).toBe(true);
     expect(isSecureRequest("http://localhost:3000/api/me", null)).toBe(false);
     expect(isSecureRequest("http://internal/api/me", "https")).toBe(true);
   });
