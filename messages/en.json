@@ -219,6 +219,7 @@
     "loginText": "Enter your mobile number and we will send you a one-time code.",
     "loadError": "We could not load your appointments.",
     "status": {
+      "Pending": "Pending",
       "Confirmed": "Confirmed",
       "Cancelled": "Cancelled",
       "Completed": "Completed",
