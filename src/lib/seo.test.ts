@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { DoctorProfile } from "./api/types";
 import { buildDoctorJsonLd, buildPageMetadata, languageAlternates, localizedUrl, serializeJsonLd } from "./seo";
 
-const BASE = "https://moonlight.example";
+const BASE = "https://drbooking.example";
 
 const doctor: DoctorProfile = {
   id: "d1",
